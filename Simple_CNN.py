@@ -121,4 +121,3 @@ def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, ba
             history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
     out_data = Table.from_numpy(None,np.hstack([np.array(history.history['accuracy'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))
     return history
-
