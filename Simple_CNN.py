@@ -109,8 +109,7 @@ def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, ba
         # Only training data
         else:
             history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
-
-
+    
     # Regression
     else:
         sr = SimpleRegressor()
