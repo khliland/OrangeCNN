@@ -74,22 +74,26 @@ class SimpleClassifier:
 ## Input handling ##
 ####################
 
-if len(in_data.Y.shape) == 2:
-    hasTestData = True
-    sel = in_data.Y[:, 1]
-    X_train = in_data.X[sel == 0, :]
-    X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
-    X_test  = in_data.X[sel == 1, :]
-    X_test  = np.reshape(X_test, [X_test.shape[0], X_test.shape[1],1])
-    Y_train = in_data.Y[sel == 0, 0]
-    Y_test  = in_data.Y[sel == 1, 0]
-else:
-    hasTestData = False
-    X_train = in_data.X
-    X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
-    Y_train = in_data.Y[:, 0]
-    X_test  = None
-    Y_test  = None
+X_train = None
+Y_train = None
+X_test  = None
+Y_test  = None
+def dataPrep(in_data):
+    if len(in_data.Y.shape) == 2:
+        sel = in_data.Y[:, 1]
+        X_train = in_data.X[sel == 0, :]
+        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
+        X_test  = in_data.X[sel == 1, :]
+        X_test  = np.reshape(X_test, [X_test.shape[0], X_test.shape[1],1])
+        Y_train = in_data.Y[sel == 0, 0]
+        Y_test  = in_data.Y[sel == 1, 0]
+    else:
+        X_train = in_data.X
+        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
+        Y_train = in_data.Y[:, 0]
+        X_test  = None
+        Y_test  = None
+    return (X_train, Y_train, X_test, Y_test)
     
 
 ###########################
@@ -113,7 +117,7 @@ def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, ba
     # Regression
     else:
         sr = SimpleRegressor()
-        model = sr.build(in_data.X.shape[1], activation="relu", optimizer=Adam(lr=lr))
+        model = sr.build(X_train.shape[1], activation="relu", optimizer=Adam(lr=lr))
         if not (type(Y_test) == type(None)):
             history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test))
         else:
