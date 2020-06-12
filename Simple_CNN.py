@@ -103,26 +103,30 @@ class SimpleClassifier:
 ###########################
 
 def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, batch_size=64, epochs=10, verbose=1, shuffle=True, lr=0.01):
-    # Classification
-    if classify:
-        sc = SimpleClassifier()
-        model = sc.build(X_train.shape[1], activation="relu", num_classes=len(np.unique(Y_train)), optimizer=Adam(lr=lr))
-        Y_train_b = to_categorical(Y_train)
-        # With test data
-        if not (type(Y_test) == type(None)):
-            Y_test_b = to_categorical(Y_test)
-            history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test_b))
-        # Only training data
-        else:
-            history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
-    
-    # Regression
+    if type(X_train) == type(None):
+        return None
     else:
-        sr = SimpleRegressor()
-        model = sr.build(X_train.shape[1], activation="relu", optimizer=Adam(lr=lr))
-        if not (type(Y_test) == type(None)):
-            history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test))
+        n_wave = X_train.shape[1]
+        # Classification
+        if classify:
+            sc = SimpleClassifier()
+            model = sc.build(n_wave, activation="relu", num_classes=len(np.unique(Y_train)), optimizer=Adam(lr=lr))
+            Y_train_b = to_categorical(Y_train)
+            # With test data
+            if not (type(Y_test) == type(None)):
+                Y_test_b = to_categorical(Y_test)
+                history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test_b))
+            # Only training data
+            else:
+                history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
+        
+        # Regression
         else:
-            history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
-    out_data = Table.from_numpy(None,np.hstack([np.array(history.history['accuracy'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))
+            sr = SimpleRegressor()
+            model = sr.build(n_wave, activation="relu", optimizer=Adam(lr=lr))
+            if not (type(Y_test) == type(None)):
+                history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test))
+            else:
+                history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)
+        out_data = Table.from_numpy(None,np.hstack([np.array(history.history['accuracy'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))
     return history
