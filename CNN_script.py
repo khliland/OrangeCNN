@@ -1,7 +1,7 @@
 # Don't touch!
 import httpimport
 with httpimport.remote_repo(['Simple_CNN'], 'https://raw.githubusercontent.com/khliland/OrangeCNN/master'):
-    import Simple_CNN
+    from Simple_CNN import *
 
 ######################
 ## Apply simple CNN ##
