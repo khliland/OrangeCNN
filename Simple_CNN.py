@@ -1,3 +1,28 @@
+####################
+## Input handling ##
+####################
+
+X_train = None
+Y_train = None
+X_test  = None
+Y_test  = None
+def dataPrep(in_data):
+    if len(in_data.Y.shape) == 2:
+        sel = in_data.Y[:, 1]
+        X_train = in_data.X[sel == 0, :]
+        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
+        X_test  = in_data.X[sel == 1, :]
+        X_test  = np.reshape(X_test, [X_test.shape[0], X_test.shape[1],1])
+        Y_train = in_data.Y[sel == 0, 0]
+        Y_test  = in_data.Y[sel == 1, 0]
+    else:
+        X_train = in_data.X
+        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
+        Y_train = in_data.Y[:, 0]
+        X_test  = None
+        Y_test  = None
+    return (X_train, Y_train, X_test, Y_test)
+
 ##########################################
 ## Simple Convolutional Neural Networks ##
 ##########################################
@@ -7,6 +32,8 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from Orange.data import Table
 import numpy as np
+
+
 
 class SimpleRegressor:
     def __init__(self):
@@ -69,32 +96,6 @@ class SimpleClassifier:
             opt = "adam" if optimizer is None else optimizer
             model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['accuracy'])
         return model
-
-####################
-## Input handling ##
-####################
-
-X_train = None
-Y_train = None
-X_test  = None
-Y_test  = None
-def dataPrep(in_data):
-    if len(in_data.Y.shape) == 2:
-        sel = in_data.Y[:, 1]
-        X_train = in_data.X[sel == 0, :]
-        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
-        X_test  = in_data.X[sel == 1, :]
-        X_test  = np.reshape(X_test, [X_test.shape[0], X_test.shape[1],1])
-        Y_train = in_data.Y[sel == 0, 0]
-        Y_test  = in_data.Y[sel == 1, 0]
-    else:
-        X_train = in_data.X
-        X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])
-        Y_train = in_data.Y[:, 0]
-        X_test  = None
-        Y_test  = None
-    return (X_train, Y_train, X_test, Y_test)
-    
 
 ###########################
 ## Applied to input data ##
