@@ -1,6 +1,6 @@
 # Don't touch! ------->
 import httpimport
-with httpimport.remote_repo(['Simple_CNN'], 'https://raw.githubusercontent.com/khliland/OrangeCNN/master'):
+with httpimport.remote_repo('https://raw.githubusercontent.com/khliland/OrangeCNN/master'):
     from Simple_CNN import *
 # <------- Don't touch!
 
