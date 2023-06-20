@@ -1,0 +1,4 @@
+quasar
+tensorflow
+httpimport
+pyqt5

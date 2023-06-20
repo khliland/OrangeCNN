@@ -1,0 +1,508 @@
+<?xml version='1.0' encoding='utf-8'?>
+<scheme version="2.0" title="Neural networks for spectroscopy" description="">
+	<nodes>
+		<node id="0" name="Python Script" qualified_name="Orange.widgets.data.owpythonscript.OWPythonScript" project_name="Orange3" version="" title="CNN" position="(486.0, 447.0)" />
+		<node id="1" name="Datasets" qualified_name="Orange.widgets.data.owdatasets.OWDataSets" project_name="Orange3" version="" title="Datasets" position="(0.0, 188.0)" />
+		<node id="2" name="Neural Network" qualified_name="Orange.widgets.model.owneuralnetwork.OWNNLearner" project_name="Orange3" version="" title="Neural Network" position="(251.0, 148.0)" />
+		<node id="3" name="Spectra" qualified_name="orangecontrib.spectroscopy.widgets.owspectra.OWSpectra" project_name="Orange-Spectroscopy" version="" title="Spectra" position="(109.0, 188.0)" />
+		<node id="4" name="Confusion Matrix" qualified_name="Orange.widgets.evaluate.owconfusionmatrix.OWConfusionMatrix" project_name="Orange3" version="" title="Confusion Matrix" position="(560.0, 257.0)" />
+		<node id="5" name="Test and Score" qualified_name="Orange.widgets.evaluate.owtestandscore.OWTestAndScore" project_name="Orange3" version="" title="Test and Score" position="(363.0, 257.0)" />
+		<node id="6" name="Data Sampler" qualified_name="Orange.widgets.data.owdatasampler.OWDataSampler" project_name="Orange3" version="" title="Data Sampler" position="(7.0, 436.0)" />
+		<node id="7" name="Data Table" qualified_name="Orange.widgets.obsolete.owtable.OWDataTable" project_name="" version="" title="Training" position="(177.0, 383.0)" />
+		<node id="8" name="Data Table" qualified_name="Orange.widgets.obsolete.owtable.OWDataTable" project_name="" version="" title="Test" position="(179.0, 505.0)" />
+		<node id="9" name="Concatenate" qualified_name="Orange.widgets.data.owconcatenate.OWConcatenate" project_name="Orange3" version="" title="Concatenate" position="(343.0, 446.0)" />
+		<node id="10" name="Scatter Plot" qualified_name="Orange.widgets.visualize.owscatterplot.OWScatterPlot" project_name="Orange3" version="" title="Scatter Plot" position="(591.0, 447.0)" />
+	</nodes>
+	<links>
+		<link id="0" source_node_id="1" sink_node_id="3" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="1" source_node_id="3" sink_node_id="2" source_channel="Data" sink_channel="Data" enabled="true" sink_channel_id="data" />
+		<link id="2" source_node_id="2" sink_node_id="5" source_channel="Learner" sink_channel="Learner" enabled="true" source_channel_id="learner" sink_channel_id="learner" />
+		<link id="3" source_node_id="5" sink_node_id="4" source_channel="Evaluation Results" sink_channel="Evaluation Results" enabled="true" source_channel_id="evaluations_results" sink_channel_id="evaluation_results" />
+		<link id="4" source_node_id="3" sink_node_id="5" source_channel="Data" sink_channel="Data" enabled="true" sink_channel_id="train_data" />
+		<link id="5" source_node_id="3" sink_node_id="6" source_channel="Data" sink_channel="Data" enabled="true" sink_channel_id="data" />
+		<link id="6" source_node_id="6" sink_node_id="7" source_channel="Data Sample" sink_channel="Data" enabled="true" source_channel_id="data_sample" sink_channel_id="data" />
+		<link id="7" source_node_id="6" sink_node_id="8" source_channel="Remaining Data" sink_channel="Data" enabled="true" source_channel_id="remaining_data" sink_channel_id="data" />
+		<link id="8" source_node_id="7" sink_node_id="9" source_channel="Data" sink_channel="Primary Data" enabled="true" source_channel_id="annotated_data" sink_channel_id="primary_data" />
+		<link id="9" source_node_id="8" sink_node_id="9" source_channel="Data" sink_channel="Additional Data" enabled="true" source_channel_id="annotated_data" sink_channel_id="additional_data" />
+		<link id="10" source_node_id="9" sink_node_id="0" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+		<link id="11" source_node_id="0" sink_node_id="10" source_channel="Data" sink_channel="Data" enabled="true" source_channel_id="data" sink_channel_id="data" />
+	</links>
+	<annotations>
+		<text id="0" type="text/plain" rect="(237.0, 576.0, 278.0, 33.0)" font-family="MS Shell Dlg 2" font-size="16">Convolutional Neural Network (CNN)</text>
+		<text id="1" type="text/plain" rect="(180.0, 62.0, 241.0, 31.0)" font-family="MS Shell Dlg 2" font-size="16">Multilayer Perceptron - MLP</text>
+	</annotations>
+	<thumbnail />
+	<node_properties>
+		<properties node_id="0" format="literal">{'controlAreaVisible': True, 'currentScriptIndex': 5, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01-\x00\x00\x00\x92\x00\x00\x04\xf6\x00\x00\x02\xe7\x00\x00\x01-\x00\x00\x00\xae\x00\x00\x04\xf6\x00\x00\x02\xe7\x00\x00\x00\x00\x00\x00\x00\x00\x05\xe8\x00\x00\x01-\x00\x00\x00\xae\x00\x00\x04\xf6\x00\x00\x02\xe7', 'scriptLibrary': [{'name': 'CNN', 'script': '##########################################\n## Simple Convolutional Neural Networks ##\n##########################################\n\nfrom tensorflow.keras import models, optimizers, layers\n\nclass SimpleRegressor:\n    def __init__(self):\n        pass\n\n    @staticmethod\n    def build(spectrumLength, activation="relu", optimizer="adam"):\n        """\n        Parameters\n        -----------\n        spectrumLength : Number of features in the spectra\n\n        Returns\n        -------\n        model : The model\n        """\n        input_layer=layers.Input(shape=(spectrumLength, 1))\n        x = layers.Conv1D(8, kernel_size=11, padding=\'valid\', strides=1)(input_layer)\n        x = layers.BatchNormalization()(x)\n        x = layers.Activation(activation)(x)\n        x = layers.Dropout(0.25)(x)\n        x = layers.Flatten()(x)\n        x = layers.Dense(32, activation=activation)(x)\n        out = layers.Dense(1, activation=\'linear\')(x)\n        \n        model = models.Model(input_layer, out)\n        opt = "adam" if optimizer is None else optimizer\n        model.compile(loss=\'mae\', optimizer=opt)\n        return model\n\nclass SimpleClassifier:\n    def __init__(self):\n        pass\n    \n    @staticmethod\n    def build(spectrumLength, activation="relu", num_classes=2, optimizer=None):\n        """\n        Parameters\n        -----------\n        spectrumLength : Number of features in the spectra\n\n        Returns\n        -------\n        model : The model\n        """\n        input_layer=layers.Input(shape=(spectrumLength, 1))\n        x = layers.Conv1D(8, kernel_size=11, padding=\'valid\', strides=1)(input_layer)\n        x = layers.BatchNormalization()(x)\n        x = layers.Activation(activation)(x)\n        x = layers.Dropout(0.25)(x)\n        x = layers.Flatten()(x)\n        x = layers.Dense(32, activation=activation)(x)\n        if num_classes == 2:\n            out = layers.Dense(1, activation=\'sigmoid\')(x)\n            model = models.Model(input_layer, out)\n            model.compile(loss=\'binary_crossentropy\', optimizer=optimizers.Adam(lr=1e-03), metrics=[\'accuracy\'])\n        else:\n            out = layers.Dense(num_classes, activation=\'softmax\')(x)\n            model = models.Model(input_layer, out)\n            opt = "adam" if optimizer is None else optimizer\n            model.compile(loss=\'categorical_crossentropy\', optimizer=opt, metrics=[\'accuracy\'])\n        return model\n\n###########################\n## Applied to input data ##\n###########################\n\n# Add empty dimension at the end\nX = np.reshape(in_data.X,[in_data.X.shape[0], in_data.X.shape[1],1])\n\n# Create regressor\n#sr = SimpleRegressor()\nsc = SimpleClassifier()\n# ... build it\n#model = sr.build(in_data.X.shape[1], activation="relu", optimizer="adam")\nmodel = sc.build(in_data.X.shape[1], activation="relu", num_classes=4, optimizer="adam")\n\n# ... and fit it\nfrom tensorflow.keras.utils import to_categorical\ny_binary = to_categorical(in_data.Y[:,0])\nhistory = model.fit(X, y_binary, batch_size=64, epochs=100, verbose=1, shuffle=True)\n\nfrom Orange.data import Table\nout_data = Table(np.hstack([np.array(history.history[\'accuracy\'])[:,np.newaxis], np.arange(1,101,1)[:,np.newaxis]]))\n\n', 'filename': None}, {'name': 'CNN2', 'script': 'X = np.reshape(in_data.X,[in_data.X.shape[0], in_data.X.shape[1]])\nY = in_data.Y\n\nfrom tensorflow.keras.models import Sequential\nfrom tensorflow.keras.layers import Dense\nfrom tensorflow.keras.wrappers.scikit_learn import KerasRegressor\nfrom sklearn.model_selection import StratifiedKFold\nfrom sklearn.model_selection import cross_val_score\nimport numpy\n \n# Function to create model, required for KerasClassifier\ndef create_model():\n\t# create model\n\tmodel = Sequential()\n\tmodel.add(Dense(12, input_dim=X.shape[1], activation=\'relu\'))\n\tmodel.add(Dense(8, activation=\'relu\'))\n\tmodel.add(Dense(1, activation=\'linear\'))\n\t# Compile model\n\tmodel.compile(loss=\'mean_squared_error\', optimizer=\'adam\', metrics=[\'accuracy\'])\n\treturn model\n#--------------------- \nfrom sklearn.linear_model import SGDClassifier\n\nfrom Orange.base import SklLearner, Learner\nfrom Orange.preprocess import Normalize\nfrom Orange.regression.linear import LinearModel\nfrom Orange.base import SklModel\n\n__all__ = ["SGDClassificationLearner"]\n\n\nclass KerasRegressorWrapper(SklLearner):\n    name = \'kr\'\n    __wraps__ = KerasRegressor\n#    __returns__ = SklModel\n    preprocessors = SklLearner.preprocessors + [Normalize()]\n\n    def fit(self, X, Y, W=None):\n        model = super().fit(X, Y, W)\n        return KRModel(model.skl_model)\n\n    def __init__(self, build_fn=create_model, preprocessors=None, **sk_params):\n        super().__init__(preprocessors=preprocessors)\n        self.params = vars()\n\nclass KRModel(SklModel):\n\n    @property\n    def coefficients(self):\n        return self.skl_model.coef_\n\n    @property\n    def predict(self, X):\n        vals = self.skl_model.predict(X)\n#        assert vals.shape[1] == 1  # currently support only single class\n        return vals.ravel()\n\n    def __str__(self):\n        return \'KRModel {}\'.format(self.skl_model)\n#fus = SGDClassificationLearner2()\n#--------------------\n# create model\nmodel = KerasRegressorWrapper(build_fn=create_model, epochs=5, batch_size=10, verbose=1)\n\n\n# fix random seed for reproducibility\n#seed = 7\n#numpy.random.seed(seed)\n\n# Cross-validation\n#kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)\n#results = cross_val_score(model, X, Y, cv=kfold)\n#print(results.mean())\n\nout_learner = model\nout_classifier = SklModel(\'banan\')', 'filename': None}, {'name': 'PLS', 'script': "import numpy as np\nimport sklearn.cross_decomposition as skl_pls\n\nfrom Orange.data import Variable, ContinuousVariable, DiscreteVariable\nfrom Orange.preprocess.score import LearnerScorer\nfrom Orange.regression import SklLearner, SklModel\n\n# Add any pre-processing of data here\n# Normalization is only needed if and when the data\n# is changing overall shape or the x axis is varying for every data row/instance\n\npls_pps = SklLearner.preprocessors\n\n\nclass _FeatureScorerMixin(LearnerScorer):\n    feature_type = Variable\n    class_type = ContinuousVariable\n\n    def score(self, data):\n        model = self(data)\n        return np.abs(model.coefficients), model.domain.attributes\n\n\nclass PLSRegressionLearner(SklLearner, _FeatureScorerMixin):\n    __wraps__ = skl_pls.PLSRegression\n    preprocessors = pls_pps\n\n    # this learner enforces a single class because multitarget is not\n    # explicitly allowed\n\n    def fit(self, X, Y, W=None):\n        model = super().fit(X, Y, W)\n        return PLSModel(model.skl_model)\n\n    def __init__(self, n_components=2, scale=True,\n                 max_iter=500, preprocessors=None):\n        super().__init__(preprocessors=preprocessors)\n        self.params = vars()\n\n\nclass PLSModel(SklModel):\n\n    @property\n    def coefficients(self):\n        return self.skl_model.coef_\n\n    def predict(self, X):\n        vals = self.skl_model.predict(X)\n        assert vals.shape[1] == 1  # currently support only single class\n        return vals.ravel()\n\n    def __str__(self):\n        return 'PLSModel {}'.format(self.skl_model)\n#out_learner = PLSRegressionLearner()\n#out_classifier = PLSRegressionLearner()\n#out_data = in_data\n#out_object = in_object\nmodel = PLSRegressionLearner()\nout_learner = model", 'filename': None}, {'name': 'SGD2', 'script': 'from sklearn.linear_model import SGDClassifier\n\nfrom Orange.base import SklLearner, Learner\nfrom Orange.preprocess import Normalize\nfrom Orange.regression.linear import LinearModel\nfrom Orange.base import SklModel\n\n__all__ = ["SGDClassificationLearner"]\n\n\nclass SGDClassificationLearner2(SklLearner):\n    name = \'sgd\'\n    __wraps__ = SGDClassifier\n    __returns__ = SklModel\n    preprocessors = SklLearner.preprocessors + [Normalize()]\n\n    def __init__(self, loss=\'hinge\', penalty=\'l2\', alpha=0.0001,\n                 l1_ratio=0.15, fit_intercept=True, max_iter=5,\n                 tol=1e-3, shuffle=True, epsilon=0.1, random_state=None,\n                 learning_rate=\'invscaling\', eta0=0.01, power_t=0.25,\n                 warm_start=False, average=False, preprocessors=None):\n        super().__init__(preprocessors=preprocessors)\n        self.params = vars()\nfus = SGDClassificationLearner2()\n\nout_learner = fus #SklLearner(\'fisk\')\nout_classifier = SklModel(\'banan\')\n\n', 'filename': None}, {'name': 'testing', 'script': '##########################################\n## Simple Convolutional Neural Networks ##\n##########################################\n\nfrom tensorflow.keras import models, optimizers, layers\nfrom tensorflow.keras.utils import to_categorical\nfrom tensorflow.keras.optimizers import Adam\nfrom Orange.data import Table\n\nclass SimpleRegressor:\n    def __init__(self):\n        pass\n\n    @staticmethod\n    def build(spectrumLength, activation="relu", optimizer="adam"):\n        """\n        Parameters\n        -----------\n        spectrumLength : Number of features in the spectra\n\n        Returns\n        -------\n        model : The model\n        """\n        input_layer=layers.Input(shape=(spectrumLength, 1))\n        x = layers.Conv1D(8, kernel_size=11, padding=\'valid\', strides=1)(input_layer)\n        x = layers.BatchNormalization()(x)\n        x = layers.Activation(activation)(x)\n        x = layers.Dropout(0.25)(x)\n        x = layers.Flatten()(x)\n        x = layers.Dense(32, activation=activation)(x)\n        out = layers.Dense(1, activation=\'linear\')(x)\n        \n        model = models.Model(input_layer, out)\n        opt = "adam" if optimizer is None else optimizer\n        model.compile(loss=\'mae\', optimizer=opt, metrics=[\'root_mean_squared_error\'])\n        return model\n\nclass SimpleClassifier:\n    def __init__(self):\n        pass\n    \n    @staticmethod\n    def build(spectrumLength, activation="relu", num_classes=2, optimizer=None):\n        """\n        Parameters\n        -----------\n        spectrumLength : Number of features in the spectra\n\n        Returns\n        -------\n        model : The model\n        """\n        input_layer=layers.Input(shape=(spectrumLength, 1))\n        x = layers.Conv1D(8, kernel_size=11, padding=\'valid\', strides=1)(input_layer)\n        x = layers.BatchNormalization()(x)\n        x = layers.Activation(activation)(x)\n        x = layers.Dropout(0.25)(x)\n        x = layers.Flatten()(x)\n        x = layers.Dense(32, activation=activation)(x)\n        if num_classes == 2:\n            out = layers.Dense(1, activation=\'sigmoid\')(x)\n            model = models.Model(input_layer, out)\n            model.compile(loss=\'binary_crossentropy\', optimizer=optimizers.Adam(lr=1e-03), metrics=[\'accuracy\'])\n        else:\n            out = layers.Dense(num_classes, activation=\'softmax\')(x)\n            model = models.Model(input_layer, out)\n            opt = "adam" if optimizer is None else optimizer\n            model.compile(loss=\'categorical_crossentropy\', optimizer=opt, metrics=[\'accuracy\'])\n        return model\n\n####################\n## Input handling ##\n####################\n\nif len(in_data.Y.shape) == 2:\n    hasTestData = True\n    sel = in_data.Y[:, 1]\n    X_train = in_data.X[sel == 0, :]\n    X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])\n    X_test  = in_data.X[sel == 1, :]\n    X_test  = np.reshape(X_test, [X_test.shape[0], X_test.shape[1],1])\n    Y_train = in_data.Y[sel == 0, 0]\n    Y_test  = in_data.Y[sel == 1, 0]\nelse:\n    hasTestData = False\n    X_train = in_data.X\n    X_train = np.reshape(X_train, [X_train.shape[0], X_train.shape[1],1])\n    Y_train = in_data.Y[:, 0]\n    X_test  = None\n    Y_test  = None\n    \n\n###########################\n## Applied to input data ##\n###########################\n\ndef CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, batch_size=64, epochs=10, verbose=1, shuffle=True, lr=0.01):\n    # Classification\n    if classify:\n        sc = SimpleClassifier()\n        model = sc.build(X_train.shape[1], activation="relu", num_classes=len(np.unique(Y_train)), optimizer=Adam(lr=lr))\n        Y_train_b = to_categorical(Y_train)\n        # With test data\n        if not (type(Y_test) == type(None)):\n            Y_test_b = to_categorical(Y_test)\n            history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test_b))\n        # Only training data\n        else:\n            history = model.fit(X_train, Y_train_b, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)\n\n\n    # Regression\n    else:\n        sr = SimpleRegressor()\n        model = sr.build(in_data.X.shape[1], activation="relu", optimizer=Adam(lr=lr))\n        if not (type(Y_test) == type(None)):\n            history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test))\n        else:\n            history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle)\n    out_data = Table.from_numpy(None,np.hstack([np.array(history.history[\'accuracy\'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))\n    return history\n\n\n######################\n## Apply simple CNN ##\n######################\n        \nclassify      = True\nepochs        = 100\nbatch_size    = 64\nlearning_rate = 0.0001\nhistory = CNN(classify, batch_size=batch_size, epochs=epochs, lr=learning_rate)\n\n', 'filename': None}, {'name': 'Script', 'script': "# Don't touch! -------&gt;\nimport httpimport\nwith httpimport.remote_repo('https://raw.githubusercontent.com/khliland/OrangeCNN/master'):\n    from Simple_CNN import *\n# &lt;------- Don't touch!\n\n\n######################\n## Apply simple CNN ##\n######################\n        \nclassify      = True\nepochs        = 100\nbatch_size    = 64\nlearning_rate = 0.0001\n\n\n# Don't touch! -------&gt;\n(X_train, Y_train, X_test, Y_test) = dataPrep(in_data)\nhistory = CNN(classify, X_train=X_train, Y_train=Y_train, X_test=X_test, Y_test=Y_test, batch_size=batch_size, epochs=epochs, lr=learning_rate)\nout_data = Table.from_numpy(None,np.hstack([np.array(history.history['accuracy'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))\n# &lt;------- Don't touch!\n", 'filename': None}], 'scriptText': "# Don't touch! -------&gt;\nimport httpimport\nwith httpimport.remote_repo('https://raw.githubusercontent.com/khliland/OrangeCNN/master'):\n    from Simple_CNN import *\n# &lt;------- Don't touch!\n\n\n######################\n## Apply simple CNN ##\n######################\n        \nclassify      = True\nepochs        = 100\nbatch_size    = 64\nlearning_rate = 0.0001\n\n\n# Don't touch! -------&gt;\n(X_train, Y_train, X_test, Y_test) = dataPrep(in_data)\nhistory = CNN(classify, X_train=X_train, Y_train=Y_train, X_test=X_test, Y_test=Y_test, batch_size=batch_size, epochs=epochs, lr=learning_rate)\nout_data = Table.from_numpy(None,np.hstack([np.array(history.history['accuracy'])[:,np.newaxis], np.arange(1,epochs + 1,1)[:,np.newaxis]]))\n# &lt;------- Don't touch!\n", 'splitterState': b'\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x01\x17\x00\x00\x00\xaa\x01\xff\xff\xff\xff\x01\x00\x00\x00\x02\x00', 'vimModeEnabled': False, '__version__': 2}</properties>
+		<properties node_id="1" format="literal">{'controlAreaVisible': True, 'header_state': b'\x00\x00\x00\xff\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x06\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02c\x00\x00\x00\x07\x01\x01\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00d\xff\xff\xff\xff\x00\x00\x00\x81\x00\x00\x00\x00\x00\x00\x00\x07\x00\x00\x00\x18\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\xc4\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00K\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00K\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00K\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00K\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00[\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03\xe8\x00\x00\x00\x00K', 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x01\xb4\x00\x00\x00\xe8\x00\x00\x043\x00\x00\x02\xe3\x00\x00\x01\xb4\x00\x00\x01\x04\x00\x00\x043\x00\x00\x02\xe3\x00\x00\x00\x00\x00\x00\x00\x00\x05\xe8\x00\x00\x01\xb4\x00\x00\x01\x04\x00\x00\x043\x00\x00\x02\xe3', 'selected_id': 'core/liver-spectroscopy.tab', 'splitter_state': b'\x00\x00\x00\xff\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x01,\x00\x00\x00\xc8\x01\xff\xff\xff\xff\x01\x00\x00\x00\x02\x00', '__version__': 1}</properties>
+		<properties node_id="2" format="literal">{'activation_index': 3, 'alpha_index': 1, 'auto_apply': True, 'controlAreaVisible': True, 'hidden_layers_input': '50,20,', 'learner_name': 'Neural Network', 'max_iterations': 200, 'replicable': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x0c\x02\x00\x00\x02=\x00\x00\r\x17\x00\x00\x03\x7f\x00\x00\x0c\x03\x00\x00\x02\\\x00\x00\r\x16\x00\x00\x03~\x00\x00\x00\x01\x00\x00\x00\x00\n\x00\x00\x00\x0c\x03\x00\x00\x02\\\x00\x00\r\x16\x00\x00\x03~', 'solver_index': 2, '__version__': 2}</properties>
+		<properties node_id="3" format="pickle">gASVSUsAAAAAAAB9lCiMD2NvbXBhdF9ub19ncm91cJSIjBJjb250cm9sQXJlYVZpc2libGWUiIwT
+c2F2ZWRXaWRnZXRHZW9tZXRyeZRDQgHZ0MsAAwAAAAABtAAAAOgAAAQzAAAC4wAAAbQAAAEEAAAE
+MwAAAuMAAAAAAAAAAAXoAAABtAAAAQQAAAQzAAAC45SMCWN1cnZlcGxvdJR9lCiMEGNvbG9yX2lu
+ZGl2aWR1YWyUiYwHaW52ZXJ0WJSJjAtsYWJlbF90aXRsZZSMAJSMC2xhYmVsX3hheGlzlGgKjAts
+YWJlbF95YXhpc5RoCowRcGVha19sYWJlbHNfc2F2ZWSUXZSMCHJhbmdlX3gxlE6MCHJhbmdlX3gy
+lE6MCHJhbmdlX3kxlE6MCHJhbmdlX3kylE6MC3NhbXBsZV9zZWVklEsAjBVzZWxlY3Rpb25fZ3Jv
+dXBfc2F2ZWSUTowJc2hvd19ncmlklImMCHZpZXd0eXBllEsAdYwLX192ZXJzaW9uX1+USwSMEGNv
+bnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGU
+fZQojAR0aW1llEdB17jdz3VAy4wGdmFsdWVzlH2UKGgFfZSMDWZlYXR1cmVfY29sb3KUTkr+////
+hpRzaBdLBHWMCmF0dHJpYnV0ZXOUfZQojAgxODAxLjI2NJRLAowIMTc5Ny40MDeUSwKMBzE3OTMu
+NTWUSwKMCDE3ODkuNjkzlEsCjAgxNzg1LjgzNpRLAowIMTc4MS45NzmUSwKMCDE3NzguMTIxlEsC
+jAgxNzc0LjI2NJRLAowIMTc3MC40MDeUSwKMBzE3NjYuNTWUSwKMCDE3NjIuNjkzlEsCjAgxNzU4
+LjgzNpRLAowIMTc1NC45NzmUSwKMCDE3NTEuMTIylEsCjAgxNzQ3LjI2NZRLAowIMTc0My40MDiU
+SwKMBzE3MzkuNTWUSwKMCDE3MzUuNjkzlEsCjAgxNzMxLjgzNpRLAowIMTcyNy45NzmUSwKMCDE3
+MjQuMTIylEsCjAgxNzIwLjI2NZRLAowIMTcxNi40MDiUSwKMCDE3MTIuNTUxlEsCjAgxNzA4LjY5
+NJRLAowIMTcwNC44MzeUSwKMCDE3MDAuOTc5lEsCjAgxNjk3LjEyMpRLAowIMTY5My4yNjWUSwKM
+CDE2ODkuNDA4lEsCjAgxNjg1LjU1MZRLAowIMTY4MS42OTSUSwKMCDE2NzcuODM3lEsCjAcxNjcz
+Ljk4lEsCjAgxNjcwLjEyM5RLAowIMTY2Ni4yNjaUSwKMCDE2NjIuNDA5lEsCjAgxNjU4LjU1MZRL
+AowIMTY1NC42OTSUSwKMCDE2NTAuODM3lEsCjAcxNjQ2Ljk4lEsCjAgxNjQzLjEyM5RLAowIMTYz
+OS4yNjaUSwKMCDE2MzUuNDA5lEsCjAgxNjMxLjU1MpRLAowIMTYyNy42OTWUSwKMCDE2MjMuODM4
+lEsCjAcxNjE5Ljk4lEsCjAgxNjE2LjEyM5RLAowIMTYxMi4yNjaUSwKMCDE2MDguNDA5lEsCjAgx
+NjA0LjU1MpRLAowIMTYwMC42OTWUSwKMCDE1OTYuODM4lEsCjAgxNTkyLjk4MZRLAowIMTU4OS4x
+MjSUSwKMCDE1ODUuMjY3lEsCjAcxNTgxLjQxlEsCjAgxNTc3LjU1MpRLAowIMTU3My42OTWUSwKM
+CDE1NjkuODM4lEsCjAgxNTY1Ljk4MZRLAowIMTU2Mi4xMjSUSwKMCDE1NTguMjY3lEsCjAcxNTU0
+LjQxlEsCjAgxNTUwLjU1M5RLAowIMTU0Ni42OTaUSwKMCDE1NDIuODM5lEsCjAgxNTM4Ljk4MZRL
+AowIMTUzNS4xMjSUSwKMCDE1MzEuMjY3lEsCjAcxNTI3LjQxlEsCjAgxNTIzLjU1M5RLAowIMTUx
+OS42OTaUSwKMCDE1MTUuODM5lEsCjAgxNTExLjk4MpRLAowIMTUwOC4xMjWUSwKMCDE1MDQuMjY4
+lEsCjAgxNTAwLjQxMZRLAowIMTQ5Ni41NTOUSwKMCDE0OTIuNjk2lEsCjAgxNDg4LjgzOZRLAowI
+MTQ4NC45ODKUSwKMCDE0ODEuMTI1lEsCjAgxNDc3LjI2OJRLAowIMTQ3My40MTGUSwKMCDE0Njku
+NTU0lEsCjAgxNDY1LjY5N5RLAowHMTQ2MS44NJRLAowIMTQ1Ny45ODKUSwKMCDE0NTQuMTI1lEsC
+jAgxNDUwLjI2OJRLAowIMTQ0Ni40MTGUSwKMCDE0NDIuNTU0lEsCjAgxNDM4LjY5N5RLAowHMTQz
+NC44NJRLAowIMTQzMC45ODOUSwKMCDE0MjcuMTI2lEsCjAgxNDIzLjI2OZRLAowIMTQxOS40MTGU
+SwKMCDE0MTUuNTU0lEsCjAgxNDExLjY5N5RLAowHMTQwNy44NJRLAowIMTQwMy45ODOUSwKMCDE0
+MDAuMTI2lEsCjAgxMzk2LjI2OZRLAowIMTM5Mi40MTKUSwKMCDEzODguNTU1lEsCjAgxMzg0LjY5
+OJRLAowIMTM4MC44NDGUSwKMCDEzNzYuOTgzlEsCjAgxMzczLjEyNpRLAowIMTM2OS4yNjmUSwKM
+CDEzNjUuNDEylEsCjAgxMzYxLjU1NZRLAowIMTM1Ny42OTiUSwKMCDEzNTMuODQxlEsCjAgxMzQ5
+Ljk4NJRLAowIMTM0Ni4xMjeUSwKMBzEzNDIuMjeUSwKMCDEzMzguNDEylEsCjAgxMzM0LjU1NZRL
+AowIMTMzMC42OTiUSwKMCDEzMjYuODQxlEsCjAgxMzIyLjk4NJRLAowIMTMxOS4xMjeUSwKMBzEz
+MTUuMjeUSwKMCDEzMTEuNDEzlEsCjAgxMzA3LjU1NpRLAowIMTMwMy42OTmUSwKMCDEyOTkuODQy
+lEsCjAgxMjk1Ljk4NJRLAowIMTI5Mi4xMjeUSwKMBzEyODguMjeUSwKMCDEyODQuNDEzlEsCjAgx
+MjgwLjU1NpRLAowIMTI3Ni42OTmUSwKMCDEyNzIuODQylEsCjAgxMjY4Ljk4NZRLAowIMTI2NS4x
+MjiUSwKMCDEyNjEuMjcxlEsCjAgxMjU3LjQxM5RLAowIMTI1My41NTaUSwKMCDEyNDkuNjk5lEsC
+jAgxMjQ1Ljg0MpRLAowIMTI0MS45ODWUSwKMCDEyMzguMTI4lEsCjAgxMjM0LjI3MZRLAowIMTIz
+MC40MTSUSwKMCDEyMjYuNTU3lEsCjAYxMjIyLjeUSwKMCDEyMTguODQzlEsCjAgxMjE0Ljk4NZRL
+AowIMTIxMS4xMjiUSwKMCDEyMDcuMjcxlEsCjAgxMjAzLjQxNJRLAowIMTE5OS41NTeUSwKMBjEx
+OTUuN5RLAowIMTE5MS44NDOUSwKMCDExODcuOTg2lEsCjAgxMTg0LjEyOZRLAowIMTE4MC4yNzGU
+SwKMCDExNzYuNDE0lEsCjAgxMTcyLjU1N5RLAowGMTE2OC43lEsCjAgxMTY0Ljg0M5RLAowIMTE2
+MC45ODaUSwKMCDExNTcuMTI5lEsCjAgxMTUzLjI3MpRLAowIMTE0OS40MTWUSwKMCDExNDUuNTU4
+lEsCjAgxMTQxLjcwMZRLAowIMTEzNy44NDSUSwKMCDExMzMuOTg2lEsCjAgxMTMwLjEyOZRLAowI
+MTEyNi4yNzKUSwKMCDExMjIuNDE1lEsCjAgxMTE4LjU1OJRLAowIMTExNC43MDGUSwKMCDExMTAu
+ODQ0lEsCjAgxMTA2Ljk4N5RLAowHMTEwMy4xM5RLAowIMTA5OS4yNzKUSwKMCDEwOTUuNDE1lEsC
+jAgxMDkxLjU1OJRLAowIMTA4Ny43MDGUSwKMCDEwODMuODQ0lEsCjAgxMDc5Ljk4N5RLAowHMTA3
+Ni4xM5RLAowIMTA3Mi4yNzOUSwKMCDEwNjguNDE2lEsCjAgxMDY0LjU1OZRLAowIMTA2MC43MDKU
+SwKMCDEwNTYuODQ0lEsCjAgxMDUyLjk4N5RLAowHMTA0OS4xM5RLAowIMTA0NS4yNzOUSwKMCDEw
+NDEuNDE2lEsCjAgxMDM3LjU1OZRLAowIMTAzMy43MDKUSwKMCDEwMjkuODQ1lEsCjAgxMDI1Ljk4
+OJRLAowIMTAyMi4xMzGUSwKMCDEwMTguMjczlEsCjAgxMDE0LjQxNpRLAowIMTAxMC41NTmUSwKM
+CDEwMDYuNzAylEsCjAgxMDAyLjg0NZRLAowHOTk4Ljk4OJRLAowIOTk1LjEzMDmUSwKMCDk5MS4y
+NzM4lEsCjAg5ODcuNDE2N5RLAowIOTgzLjU1OTaUSwKMCDk3OS43MDI1lEsCjAg5NzUuODQ1NJRL
+AowIOTcxLjk4ODOUSwKMCDk2OC4xMzEylEsCjAg5NjQuMjc0MZRLAowIOTYwLjQxNzGUSwKMCDk1
+Ni41NTk5lEsCjAg5NTIuNzAyOJRLAowIOTQ4Ljg0NTiUSwKMCDk0NC45ODg2lEsCjAg5NDEuMTMx
+NZRLAowIOTM3LjI3NDWUSwKMCDkzMy40MTc0lEsCjAg5MjkuNTYwMpRLAowIOTI1LjcwMzKUSwKM
+CDkyMS44NDYxlEsCjAc5MTcuOTg5lEsCjAg5MTQuMTMxOZRLAowIOTEwLjI3NDiUSwKMCDkwNi40
+MTc3lEsCjAg5MDIuNTYwNpRLAowEdHlwZZRLAXWMBW1ldGFzlH2UdWJoHCmBlH2UKGgfR0HXuN3P
+dUDLaCB9lCiMCWN1cnZlcGxvdJR9lIwNZmVhdHVyZV9jb2xvcpROSv7///+GlHNoF0sEdWglfZQo
+jAgxODAxLjI2NJRLAowIMTc5Ny40MDeUSwKMBzE3OTMuNTWUSwKMCDE3ODkuNjkzlEsCjAgxNzg1
+LjgzNpRLAowIMTc4MS45NzmUSwKMCDE3NzguMTIxlEsCjAgxNzc0LjI2NJRLAowIMTc3MC40MDeU
+SwKMBzE3NjYuNTWUSwKMCDE3NjIuNjkzlEsCjAgxNzU4LjgzNpRLAowIMTc1NC45NzmUSwKMCDE3
+NTEuMTIylEsCjAgxNzQ3LjI2NZRLAowIMTc0My40MDiUSwKMBzE3MzkuNTWUSwKMCDE3MzUuNjkz
+lEsCjAgxNzMxLjgzNpRLAowIMTcyNy45NzmUSwKMCDE3MjQuMTIylEsCjAgxNzIwLjI2NZRLAowI
+MTcxNi40MDiUSwKMCDE3MTIuNTUxlEsCjAgxNzA4LjY5NJRLAowIMTcwNC44MzeUSwKMCDE3MDAu
+OTc5lEsCjAgxNjk3LjEyMpRLAowIMTY5My4yNjWUSwKMCDE2ODkuNDA4lEsCjAgxNjg1LjU1MZRL
+AowIMTY4MS42OTSUSwKMCDE2NzcuODM3lEsCjAcxNjczLjk4lEsCjAgxNjcwLjEyM5RLAowIMTY2
+Ni4yNjaUSwKMCDE2NjIuNDA5lEsCjAgxNjU4LjU1MZRLAowIMTY1NC42OTSUSwKMCDE2NTAuODM3
+lEsCjAcxNjQ2Ljk4lEsCjAgxNjQzLjEyM5RLAowIMTYzOS4yNjaUSwKMCDE2MzUuNDA5lEsCjAgx
+NjMxLjU1MpRLAowIMTYyNy42OTWUSwKMCDE2MjMuODM4lEsCjAcxNjE5Ljk4lEsCjAgxNjE2LjEy
+M5RLAowIMTYxMi4yNjaUSwKMCDE2MDguNDA5lEsCjAgxNjA0LjU1MpRLAowIMTYwMC42OTWUSwKM
+CDE1OTYuODM4lEsCjAgxNTkyLjk4MZRLAowIMTU4OS4xMjSUSwKMCDE1ODUuMjY3lEsCjAcxNTgx
+LjQxlEsCjAgxNTc3LjU1MpRLAowIMTU3My42OTWUSwKMCDE1NjkuODM4lEsCjAgxNTY1Ljk4MZRL
+AowIMTU2Mi4xMjSUSwKMCDE1NTguMjY3lEsCjAcxNTU0LjQxlEsCjAgxNTUwLjU1M5RLAowIMTU0
+Ni42OTaUSwKMCDE1NDIuODM5lEsCjAgxNTM4Ljk4MZRLAowIMTUzNS4xMjSUSwKMCDE1MzEuMjY3
+lEsCjAcxNTI3LjQxlEsCjAgxNTIzLjU1M5RLAowIMTUxOS42OTaUSwKMCDE1MTUuODM5lEsCjAgx
+NTExLjk4MpRLAowIMTUwOC4xMjWUSwKMCDE1MDQuMjY4lEsCjAgxNTAwLjQxMZRLAowIMTQ5Ni41
+NTOUSwKMCDE0OTIuNjk2lEsCjAgxNDg4LjgzOZRLAowIMTQ4NC45ODKUSwKMCDE0ODEuMTI1lEsC
+jAgxNDc3LjI2OJRLAowIMTQ3My40MTGUSwKMCDE0NjkuNTU0lEsCjAgxNDY1LjY5N5RLAowHMTQ2
+MS44NJRLAowIMTQ1Ny45ODKUSwKMCDE0NTQuMTI1lEsCjAgxNDUwLjI2OJRLAowIMTQ0Ni40MTGU
+SwKMCDE0NDIuNTU0lEsCjAgxNDM4LjY5N5RLAowHMTQzNC44NJRLAowIMTQzMC45ODOUSwKMCDE0
+MjcuMTI2lEsCjAgxNDIzLjI2OZRLAowIMTQxOS40MTGUSwKMCDE0MTUuNTU0lEsCjAgxNDExLjY5
+N5RLAowHMTQwNy44NJRLAowIMTQwMy45ODOUSwKMCDE0MDAuMTI2lEsCjAgxMzk2LjI2OZRLAowI
+MTM5Mi40MTKUSwKMCDEzODguNTU1lEsCjAgxMzg0LjY5OJRLAowIMTM4MC44NDGUSwKMCDEzNzYu
+OTgzlEsCjAgxMzczLjEyNpRLAowIMTM2OS4yNjmUSwKMCDEzNjUuNDEylEsCjAgxMzYxLjU1NZRL
+AowIMTM1Ny42OTiUSwKMCDEzNTMuODQxlEsCjAgxMzQ5Ljk4NJRLAowIMTM0Ni4xMjeUSwKMBzEz
+NDIuMjeUSwKMCDEzMzguNDEylEsCjAgxMzM0LjU1NZRLAowIMTMzMC42OTiUSwKMCDEzMjYuODQx
+lEsCjAgxMzIyLjk4NJRLAowIMTMxOS4xMjeUSwKMBzEzMTUuMjeUSwKMCDEzMTEuNDEzlEsCjAgx
+MzA3LjU1NpRLAowIMTMwMy42OTmUSwKMCDEyOTkuODQylEsCjAgxMjk1Ljk4NJRLAowIMTI5Mi4x
+MjeUSwKMBzEyODguMjeUSwKMCDEyODQuNDEzlEsCjAgxMjgwLjU1NpRLAowIMTI3Ni42OTmUSwKM
+CDEyNzIuODQylEsCjAgxMjY4Ljk4NZRLAowIMTI2NS4xMjiUSwKMCDEyNjEuMjcxlEsCjAgxMjU3
+LjQxM5RLAowIMTI1My41NTaUSwKMCDEyNDkuNjk5lEsCjAgxMjQ1Ljg0MpRLAowIMTI0MS45ODWU
+SwKMCDEyMzguMTI4lEsCjAgxMjM0LjI3MZRLAowIMTIzMC40MTSUSwKMCDEyMjYuNTU3lEsCjAYx
+MjIyLjeUSwKMCDEyMTguODQzlEsCjAgxMjE0Ljk4NZRLAowIMTIxMS4xMjiUSwKMCDEyMDcuMjcx
+lEsCjAgxMjAzLjQxNJRLAowIMTE5OS41NTeUSwKMBjExOTUuN5RLAowIMTE5MS44NDOUSwKMCDEx
+ODcuOTg2lEsCjAgxMTg0LjEyOZRLAowIMTE4MC4yNzGUSwKMCDExNzYuNDE0lEsCjAgxMTcyLjU1
+N5RLAowGMTE2OC43lEsCjAgxMTY0Ljg0M5RLAowIMTE2MC45ODaUSwKMCDExNTcuMTI5lEsCjAgx
+MTUzLjI3MpRLAowIMTE0OS40MTWUSwKMCDExNDUuNTU4lEsCjAgxMTQxLjcwMZRLAowIMTEzNy44
+NDSUSwKMCDExMzMuOTg2lEsCjAgxMTMwLjEyOZRLAowIMTEyNi4yNzKUSwKMCDExMjIuNDE1lEsC
+jAgxMTE4LjU1OJRLAowIMTExNC43MDGUSwKMCDExMTAuODQ0lEsCjAgxMTA2Ljk4N5RLAowHMTEw
+My4xM5RLAowIMTA5OS4yNzKUSwKMCDEwOTUuNDE1lEsCjAgxMDkxLjU1OJRLAowIMTA4Ny43MDGU
+SwKMCDEwODMuODQ0lEsCjAgxMDc5Ljk4N5RLAowHMTA3Ni4xM5RLAowIMTA3Mi4yNzOUSwKMCDEw
+NjguNDE2lEsCjAgxMDY0LjU1OZRLAowIMTA2MC43MDKUSwKMCDEwNTYuODQ0lEsCjAgxMDUyLjk4
+N5RLAowHMTA0OS4xM5RLAowIMTA0NS4yNzOUSwKMCDEwNDEuNDE2lEsCjAgxMDM3LjU1OZRLAowI
+MTAzMy43MDKUSwKMCDEwMjkuODQ1lEsCjAgxMDI1Ljk4OJRLAowIMTAyMi4xMzGUSwKMCDEwMTgu
+MjczlEsCjAgxMDE0LjQxNpRLAowIMTAxMC41NTmUSwKMCDEwMDYuNzAylEsCjAgxMDAyLjg0NZRL
+AowHOTk4Ljk4OJRLAowIOTk1LjEzMDmUSwKMCDk5MS4yNzM4lEsCjAg5ODcuNDE2N5RLAowIOTgz
+LjU1OTaUSwKMCDk3OS43MDI1lEsCjAg5NzUuODQ1NJRLAowIOTcxLjk4ODOUSwKMCDk2OC4xMzEy
+lEsCjAg5NjQuMjc0MZRLAowIOTYwLjQxNzGUSwKMCDk1Ni41NTk5lEsCjAg5NTIuNzAyOJRLAowI
+OTQ4Ljg0NTiUSwKMCDk0NC45ODg2lEsCjAg5NDEuMTMxNZRLAowIOTM3LjI3NDWUSwKMCDkzMy40
+MTc0lEsCjAg5MjkuNTYwMpRLAowIOTI1LjcwMzKUSwKMCDkyMS44NDYxlEsCjAc5MTcuOTg5lEsC
+jAg5MTQuMTMxOZRLAowIOTEwLjI3NDiUSwKMCDkwNi40MTc3lEsCjAg5MDIuNTYwNpRLAowEdHlw
+ZZRLAXVqEgEAAH2UdWJoHCmBlH2UKGgfR0HXuNuRtbucaCB9lCiMCWN1cnZlcGxvdJR9lIwNZmVh
+dHVyZV9jb2xvcpROSv7///+GlHNoF0sEdWglfZQojAgxODAxLjI2NJRLAowIMTc5Ny40MDeUSwKM
+BzE3OTMuNTWUSwKMCDE3ODkuNjkzlEsCjAgxNzg1LjgzNpRLAowIMTc4MS45NzmUSwKMCDE3Nzgu
+MTIxlEsCjAgxNzc0LjI2NJRLAowIMTc3MC40MDeUSwKMBzE3NjYuNTWUSwKMCDE3NjIuNjkzlEsC
+jAgxNzU4LjgzNpRLAowIMTc1NC45NzmUSwKMCDE3NTEuMTIylEsCjAgxNzQ3LjI2NZRLAowIMTc0
+My40MDiUSwKMBzE3MzkuNTWUSwKMCDE3MzUuNjkzlEsCjAgxNzMxLjgzNpRLAowIMTcyNy45NzmU
+SwKMCDE3MjQuMTIylEsCjAgxNzIwLjI2NZRLAowIMTcxNi40MDiUSwKMCDE3MTIuNTUxlEsCjAgx
+NzA4LjY5NJRLAowIMTcwNC44MzeUSwKMCDE3MDAuOTc5lEsCjAgxNjk3LjEyMpRLAowIMTY5My4y
+NjWUSwKMCDE2ODkuNDA4lEsCjAgxNjg1LjU1MZRLAowIMTY4MS42OTSUSwKMCDE2NzcuODM3lEsC
+jAcxNjczLjk4lEsCjAgxNjcwLjEyM5RLAowIMTY2Ni4yNjaUSwKMCDE2NjIuNDA5lEsCjAgxNjU4
+LjU1MZRLAowIMTY1NC42OTSUSwKMCDE2NTAuODM3lEsCjAcxNjQ2Ljk4lEsCjAgxNjQzLjEyM5RL
+AowIMTYzOS4yNjaUSwKMCDE2MzUuNDA5lEsCjAgxNjMxLjU1MpRLAowIMTYyNy42OTWUSwKMCDE2
+MjMuODM4lEsCjAcxNjE5Ljk4lEsCjAgxNjE2LjEyM5RLAowIMTYxMi4yNjaUSwKMCDE2MDguNDA5
+lEsCjAgxNjA0LjU1MpRLAowIMTYwMC42OTWUSwKMCDE1OTYuODM4lEsCjAgxNTkyLjk4MZRLAowI
+MTU4OS4xMjSUSwKMCDE1ODUuMjY3lEsCjAcxNTgxLjQxlEsCjAgxNTc3LjU1MpRLAowIMTU3My42
+OTWUSwKMCDE1NjkuODM4lEsCjAgxNTY1Ljk4MZRLAowIMTU2Mi4xMjSUSwKMCDE1NTguMjY3lEsC
+jAcxNTU0LjQxlEsCjAgxNTUwLjU1M5RLAowIMTU0Ni42OTaUSwKMCDE1NDIuODM5lEsCjAgxNTM4
+Ljk4MZRLAowIMTUzNS4xMjSUSwKMCDE1MzEuMjY3lEsCjAcxNTI3LjQxlEsCjAgxNTIzLjU1M5RL
+AowIMTUxOS42OTaUSwKMCDE1MTUuODM5lEsCjAgxNTExLjk4MpRLAowIMTUwOC4xMjWUSwKMCDE1
+MDQuMjY4lEsCjAgxNTAwLjQxMZRLAowIMTQ5Ni41NTOUSwKMCDE0OTIuNjk2lEsCjAgxNDg4Ljgz
+OZRLAowIMTQ4NC45ODKUSwKMCDE0ODEuMTI1lEsCjAgxNDc3LjI2OJRLAowIMTQ3My40MTGUSwKM
+CDE0NjkuNTU0lEsCjAgxNDY1LjY5N5RLAowHMTQ2MS44NJRLAowIMTQ1Ny45ODKUSwKMCDE0NTQu
+MTI1lEsCjAgxNDUwLjI2OJRLAowIMTQ0Ni40MTGUSwKMCDE0NDIuNTU0lEsCjAgxNDM4LjY5N5RL
+AowHMTQzNC44NJRLAowIMTQzMC45ODOUSwKMCDE0MjcuMTI2lEsCjAgxNDIzLjI2OZRLAowIMTQx
+OS40MTGUSwKMCDE0MTUuNTU0lEsCjAgxNDExLjY5N5RLAowHMTQwNy44NJRLAowIMTQwMy45ODOU
+SwKMCDE0MDAuMTI2lEsCjAgxMzk2LjI2OZRLAowIMTM5Mi40MTKUSwKMCDEzODguNTU1lEsCjAgx
+Mzg0LjY5OJRLAowIMTM4MC44NDGUSwKMCDEzNzYuOTgzlEsCjAgxMzczLjEyNpRLAowIMTM2OS4y
+NjmUSwKMCDEzNjUuNDEylEsCjAgxMzYxLjU1NZRLAowIMTM1Ny42OTiUSwKMCDEzNTMuODQxlEsC
+jAgxMzQ5Ljk4NJRLAowIMTM0Ni4xMjeUSwKMBzEzNDIuMjeUSwKMCDEzMzguNDEylEsCjAgxMzM0
+LjU1NZRLAowIMTMzMC42OTiUSwKMCDEzMjYuODQxlEsCjAgxMzIyLjk4NJRLAowIMTMxOS4xMjeU
+SwKMBzEzMTUuMjeUSwKMCDEzMTEuNDEzlEsCjAgxMzA3LjU1NpRLAowIMTMwMy42OTmUSwKMCDEy
+OTkuODQylEsCjAgxMjk1Ljk4NJRLAowIMTI5Mi4xMjeUSwKMBzEyODguMjeUSwKMCDEyODQuNDEz
+lEsCjAgxMjgwLjU1NpRLAowIMTI3Ni42OTmUSwKMCDEyNzIuODQylEsCjAgxMjY4Ljk4NZRLAowI
+MTI2NS4xMjiUSwKMCDEyNjEuMjcxlEsCjAgxMjU3LjQxM5RLAowIMTI1My41NTaUSwKMCDEyNDku
+Njk5lEsCjAgxMjQ1Ljg0MpRLAowIMTI0MS45ODWUSwKMCDEyMzguMTI4lEsCjAgxMjM0LjI3MZRL
+AowIMTIzMC40MTSUSwKMCDEyMjYuNTU3lEsCjAYxMjIyLjeUSwKMCDEyMTguODQzlEsCjAgxMjE0
+Ljk4NZRLAowIMTIxMS4xMjiUSwKMCDEyMDcuMjcxlEsCjAgxMjAzLjQxNJRLAowIMTE5OS41NTeU
+SwKMBjExOTUuN5RLAowIMTE5MS44NDOUSwKMCDExODcuOTg2lEsCjAgxMTg0LjEyOZRLAowIMTE4
+MC4yNzGUSwKMCDExNzYuNDE0lEsCjAgxMTcyLjU1N5RLAowGMTE2OC43lEsCjAgxMTY0Ljg0M5RL
+AowIMTE2MC45ODaUSwKMCDExNTcuMTI5lEsCjAgxMTUzLjI3MpRLAowIMTE0OS40MTWUSwKMCDEx
+NDUuNTU4lEsCjAgxMTQxLjcwMZRLAowIMTEzNy44NDSUSwKMCDExMzMuOTg2lEsCjAgxMTMwLjEy
+OZRLAowIMTEyNi4yNzKUSwKMCDExMjIuNDE1lEsCjAgxMTE4LjU1OJRLAowIMTExNC43MDGUSwKM
+CDExMTAuODQ0lEsCjAgxMTA2Ljk4N5RLAowHMTEwMy4xM5RLAowIMTA5OS4yNzKUSwKMCDEwOTUu
+NDE1lEsCjAgxMDkxLjU1OJRLAowIMTA4Ny43MDGUSwKMCDEwODMuODQ0lEsCjAgxMDc5Ljk4N5RL
+AowHMTA3Ni4xM5RLAowIMTA3Mi4yNzOUSwKMCDEwNjguNDE2lEsCjAgxMDY0LjU1OZRLAowIMTA2
+MC43MDKUSwKMCDEwNTYuODQ0lEsCjAgxMDUyLjk4N5RLAowHMTA0OS4xM5RLAowIMTA0NS4yNzOU
+SwKMCDEwNDEuNDE2lEsCjAgxMDM3LjU1OZRLAowIMTAzMy43MDKUSwKMCDEwMjkuODQ1lEsCjAgx
+MDI1Ljk4OJRLAowIMTAyMi4xMzGUSwKMCDEwMTguMjczlEsCjAgxMDE0LjQxNpRLAowIMTAxMC41
+NTmUSwKMCDEwMDYuNzAylEsCjAgxMDAyLjg0NZRLAowHOTk4Ljk4OJRLAowIOTk1LjEzMDmUSwKM
+CDk5MS4yNzM4lEsCjAg5ODcuNDE2N5RLAowIOTgzLjU1OTaUSwKMCDk3OS43MDI1lEsCjAg5NzUu
+ODQ1NJRLAowIOTcxLjk4ODOUSwKMCDk2OC4xMzEylEsCjAg5NjQuMjc0MZRLAowIOTYwLjQxNzGU
+SwKMCDk1Ni41NTk5lEsCjAg5NTIuNzAyOJRLAowIOTQ4Ljg0NTiUSwKMCDk0NC45ODg2lEsCjAg5
+NDEuMTMxNZRLAowIOTM3LjI3NDWUSwKMCDkzMy40MTc0lEsCjAg5MjkuNTYwMpRLAowIOTI1Ljcw
+MzKUSwKMCDkyMS44NDYxlEsCjAc5MTcuOTg5lEsCjAg5MTQuMTMxOZRLAowIOTEwLjI3NDiUSwKM
+CDkwNi40MTc3lEsCjAg5MDIuNTYwNpRLAowEdHlwZZRLAXVqEgEAAH2UdWJoHCmBlH2UKGgfR0HX
+uNtcfk6raCB9lCiMCWN1cnZlcGxvdJR9lIwNZmVhdHVyZV9jb2xvcpROSv7///+GlHNoF0sEdWgl
+fZQojAgxODAxLjI2NJRLAowIMTc5Ny40MDeUSwKMBzE3OTMuNTWUSwKMCDE3ODkuNjkzlEsCjAgx
+Nzg1LjgzNpRLAowIMTc4MS45NzmUSwKMCDE3NzguMTIxlEsCjAgxNzc0LjI2NJRLAowIMTc3MC40
+MDeUSwKMBzE3NjYuNTWUSwKMCDE3NjIuNjkzlEsCjAgxNzU4LjgzNpRLAowIMTc1NC45NzmUSwKM
+CDE3NTEuMTIylEsCjAgxNzQ3LjI2NZRLAowIMTc0My40MDiUSwKMBzE3MzkuNTWUSwKMCDE3MzUu
+NjkzlEsCjAgxNzMxLjgzNpRLAowIMTcyNy45NzmUSwKMCDE3MjQuMTIylEsCjAgxNzIwLjI2NZRL
+AowIMTcxNi40MDiUSwKMCDE3MTIuNTUxlEsCjAgxNzA4LjY5NJRLAowIMTcwNC44MzeUSwKMCDE3
+MDAuOTc5lEsCjAgxNjk3LjEyMpRLAowIMTY5My4yNjWUSwKMCDE2ODkuNDA4lEsCjAgxNjg1LjU1
+MZRLAowIMTY4MS42OTSUSwKMCDE2NzcuODM3lEsCjAcxNjczLjk4lEsCjAgxNjcwLjEyM5RLAowI
+MTY2Ni4yNjaUSwKMCDE2NjIuNDA5lEsCjAgxNjU4LjU1MZRLAowIMTY1NC42OTSUSwKMCDE2NTAu
+ODM3lEsCjAcxNjQ2Ljk4lEsCjAgxNjQzLjEyM5RLAowIMTYzOS4yNjaUSwKMCDE2MzUuNDA5lEsC
+jAgxNjMxLjU1MpRLAowIMTYyNy42OTWUSwKMCDE2MjMuODM4lEsCjAcxNjE5Ljk4lEsCjAgxNjE2
+LjEyM5RLAowIMTYxMi4yNjaUSwKMCDE2MDguNDA5lEsCjAgxNjA0LjU1MpRLAowIMTYwMC42OTWU
+SwKMCDE1OTYuODM4lEsCjAgxNTkyLjk4MZRLAowIMTU4OS4xMjSUSwKMCDE1ODUuMjY3lEsCjAcx
+NTgxLjQxlEsCjAgxNTc3LjU1MpRLAowIMTU3My42OTWUSwKMCDE1NjkuODM4lEsCjAgxNTY1Ljk4
+MZRLAowIMTU2Mi4xMjSUSwKMCDE1NTguMjY3lEsCjAcxNTU0LjQxlEsCjAgxNTUwLjU1M5RLAowI
+MTU0Ni42OTaUSwKMCDE1NDIuODM5lEsCjAgxNTM4Ljk4MZRLAowIMTUzNS4xMjSUSwKMCDE1MzEu
+MjY3lEsCjAcxNTI3LjQxlEsCjAgxNTIzLjU1M5RLAowIMTUxOS42OTaUSwKMCDE1MTUuODM5lEsC
+jAgxNTExLjk4MpRLAowIMTUwOC4xMjWUSwKMCDE1MDQuMjY4lEsCjAgxNTAwLjQxMZRLAowIMTQ5
+Ni41NTOUSwKMCDE0OTIuNjk2lEsCjAgxNDg4LjgzOZRLAowIMTQ4NC45ODKUSwKMCDE0ODEuMTI1
+lEsCjAgxNDc3LjI2OJRLAowIMTQ3My40MTGUSwKMCDE0NjkuNTU0lEsCjAgxNDY1LjY5N5RLAowH
+MTQ2MS44NJRLAowIMTQ1Ny45ODKUSwKMCDE0NTQuMTI1lEsCjAgxNDUwLjI2OJRLAowIMTQ0Ni40
+MTGUSwKMCDE0NDIuNTU0lEsCjAgxNDM4LjY5N5RLAowHMTQzNC44NJRLAowIMTQzMC45ODOUSwKM
+CDE0MjcuMTI2lEsCjAgxNDIzLjI2OZRLAowIMTQxOS40MTGUSwKMCDE0MTUuNTU0lEsCjAgxNDEx
+LjY5N5RLAowHMTQwNy44NJRLAowIMTQwMy45ODOUSwKMCDE0MDAuMTI2lEsCjAgxMzk2LjI2OZRL
+AowIMTM5Mi40MTKUSwKMCDEzODguNTU1lEsCjAgxMzg0LjY5OJRLAowIMTM4MC44NDGUSwKMCDEz
+NzYuOTgzlEsCjAgxMzczLjEyNpRLAowIMTM2OS4yNjmUSwKMCDEzNjUuNDEylEsCjAgxMzYxLjU1
+NZRLAowIMTM1Ny42OTiUSwKMCDEzNTMuODQxlEsCjAgxMzQ5Ljk4NJRLAowIMTM0Ni4xMjeUSwKM
+BzEzNDIuMjeUSwKMCDEzMzguNDEylEsCjAgxMzM0LjU1NZRLAowIMTMzMC42OTiUSwKMCDEzMjYu
+ODQxlEsCjAgxMzIyLjk4NJRLAowIMTMxOS4xMjeUSwKMBzEzMTUuMjeUSwKMCDEzMTEuNDEzlEsC
+jAgxMzA3LjU1NpRLAowIMTMwMy42OTmUSwKMCDEyOTkuODQylEsCjAgxMjk1Ljk4NJRLAowIMTI5
+Mi4xMjeUSwKMBzEyODguMjeUSwKMCDEyODQuNDEzlEsCjAgxMjgwLjU1NpRLAowIMTI3Ni42OTmU
+SwKMCDEyNzIuODQylEsCjAgxMjY4Ljk4NZRLAowIMTI2NS4xMjiUSwKMCDEyNjEuMjcxlEsCjAgx
+MjU3LjQxM5RLAowIMTI1My41NTaUSwKMCDEyNDkuNjk5lEsCjAgxMjQ1Ljg0MpRLAowIMTI0MS45
+ODWUSwKMCDEyMzguMTI4lEsCjAgxMjM0LjI3MZRLAowIMTIzMC40MTSUSwKMCDEyMjYuNTU3lEsC
+jAYxMjIyLjeUSwKMCDEyMTguODQzlEsCjAgxMjE0Ljk4NZRLAowIMTIxMS4xMjiUSwKMCDEyMDcu
+MjcxlEsCjAgxMjAzLjQxNJRLAowIMTE5OS41NTeUSwKMBjExOTUuN5RLAowIMTE5MS44NDOUSwKM
+CDExODcuOTg2lEsCjAgxMTg0LjEyOZRLAowIMTE4MC4yNzGUSwKMCDExNzYuNDE0lEsCjAgxMTcy
+LjU1N5RLAowGMTE2OC43lEsCjAgxMTY0Ljg0M5RLAowIMTE2MC45ODaUSwKMCDExNTcuMTI5lEsC
+jAgxMTUzLjI3MpRLAowIMTE0OS40MTWUSwKMCDExNDUuNTU4lEsCjAgxMTQxLjcwMZRLAowIMTEz
+Ny44NDSUSwKMCDExMzMuOTg2lEsCjAgxMTMwLjEyOZRLAowIMTEyNi4yNzKUSwKMCDExMjIuNDE1
+lEsCjAgxMTE4LjU1OJRLAowIMTExNC43MDGUSwKMCDExMTAuODQ0lEsCjAgxMTA2Ljk4N5RLAowH
+MTEwMy4xM5RLAowIMTA5OS4yNzKUSwKMCDEwOTUuNDE1lEsCjAgxMDkxLjU1OJRLAowIMTA4Ny43
+MDGUSwKMCDEwODMuODQ0lEsCjAgxMDc5Ljk4N5RLAowHMTA3Ni4xM5RLAowIMTA3Mi4yNzOUSwKM
+CDEwNjguNDE2lEsCjAgxMDY0LjU1OZRLAowIMTA2MC43MDKUSwKMCDEwNTYuODQ0lEsCjAgxMDUy
+Ljk4N5RLAowHMTA0OS4xM5RLAowIMTA0NS4yNzOUSwKMCDEwNDEuNDE2lEsCjAgxMDM3LjU1OZRL
+AowIMTAzMy43MDKUSwKMCDEwMjkuODQ1lEsCjAgxMDI1Ljk4OJRLAowIMTAyMi4xMzGUSwKMCDEw
+MTguMjczlEsCjAgxMDE0LjQxNpRLAowIMTAxMC41NTmUSwKMCDEwMDYuNzAylEsCjAgxMDAyLjg0
+NZRLAowHOTk4Ljk4OJRLAowIOTk1LjEzMDmUSwKMCDk5MS4yNzM4lEsCjAg5ODcuNDE2N5RLAowI
+OTgzLjU1OTaUSwKMCDk3OS43MDI1lEsCjAg5NzUuODQ1NJRLAowIOTcxLjk4ODOUSwKMCDk2OC4x
+MzEylEsCjAg5NjQuMjc0MZRLAowIOTYwLjQxNzGUSwKMCDk1Ni41NTk5lEsCjAg5NTIuNzAyOJRL
+AowIOTQ4Ljg0NTiUSwKMCDk0NC45ODg2lEsCjAg5NDEuMTMxNZRLAowIOTM3LjI3NDWUSwKMCDkz
+My40MTc0lEsCjAg5MjkuNTYwMpRLAowIOTI1LjcwMzKUSwKMCDkyMS44NDYxlEsCjAc5MTcuOTg5
+lEsCjAg5MTQuMTMxOZRLAowIOTEwLjI3NDiUSwKMCDkwNi40MTc3lEsCjAg5MDIuNTYwNpRLAowE
+dHlwZZRLAXVqEgEAAH2UdWJoHCmBlH2UKGgfR0HXuNrCEHEJaCB9lCiMCWN1cnZlcGxvdJR9lIwN
+ZmVhdHVyZV9jb2xvcpROSv7///+GlHNoF0sEdWglfZQojAgxODAxLjI2NJRLAowIMTc5Ny40MDeU
+SwKMBzE3OTMuNTWUSwKMCDE3ODkuNjkzlEsCjAgxNzg1LjgzNpRLAowIMTc4MS45NzmUSwKMCDE3
+NzguMTIxlEsCjAgxNzc0LjI2NJRLAowIMTc3MC40MDeUSwKMBzE3NjYuNTWUSwKMCDE3NjIuNjkz
+lEsCjAgxNzU4LjgzNpRLAowIMTc1NC45NzmUSwKMCDE3NTEuMTIylEsCjAgxNzQ3LjI2NZRLAowI
+MTc0My40MDiUSwKMBzE3MzkuNTWUSwKMCDE3MzUuNjkzlEsCjAgxNzMxLjgzNpRLAowIMTcyNy45
+NzmUSwKMCDE3MjQuMTIylEsCjAgxNzIwLjI2NZRLAowIMTcxNi40MDiUSwKMCDE3MTIuNTUxlEsC
+jAgxNzA4LjY5NJRLAowIMTcwNC44MzeUSwKMCDE3MDAuOTc5lEsCjAgxNjk3LjEyMpRLAowIMTY5
+My4yNjWUSwKMCDE2ODkuNDA4lEsCjAgxNjg1LjU1MZRLAowIMTY4MS42OTSUSwKMCDE2NzcuODM3
+lEsCjAcxNjczLjk4lEsCjAgxNjcwLjEyM5RLAowIMTY2Ni4yNjaUSwKMCDE2NjIuNDA5lEsCjAgx
+NjU4LjU1MZRLAowIMTY1NC42OTSUSwKMCDE2NTAuODM3lEsCjAcxNjQ2Ljk4lEsCjAgxNjQzLjEy
+M5RLAowIMTYzOS4yNjaUSwKMCDE2MzUuNDA5lEsCjAgxNjMxLjU1MpRLAowIMTYyNy42OTWUSwKM
+CDE2MjMuODM4lEsCjAcxNjE5Ljk4lEsCjAgxNjE2LjEyM5RLAowIMTYxMi4yNjaUSwKMCDE2MDgu
+NDA5lEsCjAgxNjA0LjU1MpRLAowIMTYwMC42OTWUSwKMCDE1OTYuODM4lEsCjAgxNTkyLjk4MZRL
+AowIMTU4OS4xMjSUSwKMCDE1ODUuMjY3lEsCjAcxNTgxLjQxlEsCjAgxNTc3LjU1MpRLAowIMTU3
+My42OTWUSwKMCDE1NjkuODM4lEsCjAgxNTY1Ljk4MZRLAowIMTU2Mi4xMjSUSwKMCDE1NTguMjY3
+lEsCjAcxNTU0LjQxlEsCjAgxNTUwLjU1M5RLAowIMTU0Ni42OTaUSwKMCDE1NDIuODM5lEsCjAgx
+NTM4Ljk4MZRLAowIMTUzNS4xMjSUSwKMCDE1MzEuMjY3lEsCjAcxNTI3LjQxlEsCjAgxNTIzLjU1
+M5RLAowIMTUxOS42OTaUSwKMCDE1MTUuODM5lEsCjAgxNTExLjk4MpRLAowIMTUwOC4xMjWUSwKM
+CDE1MDQuMjY4lEsCjAgxNTAwLjQxMZRLAowIMTQ5Ni41NTOUSwKMCDE0OTIuNjk2lEsCjAgxNDg4
+LjgzOZRLAowIMTQ4NC45ODKUSwKMCDE0ODEuMTI1lEsCjAgxNDc3LjI2OJRLAowIMTQ3My40MTGU
+SwKMCDE0NjkuNTU0lEsCjAgxNDY1LjY5N5RLAowHMTQ2MS44NJRLAowIMTQ1Ny45ODKUSwKMCDE0
+NTQuMTI1lEsCjAgxNDUwLjI2OJRLAowIMTQ0Ni40MTGUSwKMCDE0NDIuNTU0lEsCjAgxNDM4LjY5
+N5RLAowHMTQzNC44NJRLAowIMTQzMC45ODOUSwKMCDE0MjcuMTI2lEsCjAgxNDIzLjI2OZRLAowI
+MTQxOS40MTGUSwKMCDE0MTUuNTU0lEsCjAgxNDExLjY5N5RLAowHMTQwNy44NJRLAowIMTQwMy45
+ODOUSwKMCDE0MDAuMTI2lEsCjAgxMzk2LjI2OZRLAowIMTM5Mi40MTKUSwKMCDEzODguNTU1lEsC
+jAgxMzg0LjY5OJRLAowIMTM4MC44NDGUSwKMCDEzNzYuOTgzlEsCjAgxMzczLjEyNpRLAowIMTM2
+OS4yNjmUSwKMCDEzNjUuNDEylEsCjAgxMzYxLjU1NZRLAowIMTM1Ny42OTiUSwKMCDEzNTMuODQx
+lEsCjAgxMzQ5Ljk4NJRLAowIMTM0Ni4xMjeUSwKMBzEzNDIuMjeUSwKMCDEzMzguNDEylEsCjAgx
+MzM0LjU1NZRLAowIMTMzMC42OTiUSwKMCDEzMjYuODQxlEsCjAgxMzIyLjk4NJRLAowIMTMxOS4x
+MjeUSwKMBzEzMTUuMjeUSwKMCDEzMTEuNDEzlEsCjAgxMzA3LjU1NpRLAowIMTMwMy42OTmUSwKM
+CDEyOTkuODQylEsCjAgxMjk1Ljk4NJRLAowIMTI5Mi4xMjeUSwKMBzEyODguMjeUSwKMCDEyODQu
+NDEzlEsCjAgxMjgwLjU1NpRLAowIMTI3Ni42OTmUSwKMCDEyNzIuODQylEsCjAgxMjY4Ljk4NZRL
+AowIMTI2NS4xMjiUSwKMCDEyNjEuMjcxlEsCjAgxMjU3LjQxM5RLAowIMTI1My41NTaUSwKMCDEy
+NDkuNjk5lEsCjAgxMjQ1Ljg0MpRLAowIMTI0MS45ODWUSwKMCDEyMzguMTI4lEsCjAgxMjM0LjI3
+MZRLAowIMTIzMC40MTSUSwKMCDEyMjYuNTU3lEsCjAYxMjIyLjeUSwKMCDEyMTguODQzlEsCjAgx
+MjE0Ljk4NZRLAowIMTIxMS4xMjiUSwKMCDEyMDcuMjcxlEsCjAgxMjAzLjQxNJRLAowIMTE5OS41
+NTeUSwKMBjExOTUuN5RLAowIMTE5MS44NDOUSwKMCDExODcuOTg2lEsCjAgxMTg0LjEyOZRLAowI
+MTE4MC4yNzGUSwKMCDExNzYuNDE0lEsCjAgxMTcyLjU1N5RLAowGMTE2OC43lEsCjAgxMTY0Ljg0
+M5RLAowIMTE2MC45ODaUSwKMCDExNTcuMTI5lEsCjAgxMTUzLjI3MpRLAowIMTE0OS40MTWUSwKM
+CDExNDUuNTU4lEsCjAgxMTQxLjcwMZRLAowIMTEzNy44NDSUSwKMCDExMzMuOTg2lEsCjAgxMTMw
+LjEyOZRLAowIMTEyNi4yNzKUSwKMCDExMjIuNDE1lEsCjAgxMTE4LjU1OJRLAowIMTExNC43MDGU
+SwKMCDExMTAuODQ0lEsCjAgxMTA2Ljk4N5RLAowHMTEwMy4xM5RLAowIMTA5OS4yNzKUSwKMCDEw
+OTUuNDE1lEsCjAgxMDkxLjU1OJRLAowIMTA4Ny43MDGUSwKMCDEwODMuODQ0lEsCjAgxMDc5Ljk4
+N5RLAowHMTA3Ni4xM5RLAowIMTA3Mi4yNzOUSwKMCDEwNjguNDE2lEsCjAgxMDY0LjU1OZRLAowI
+MTA2MC43MDKUSwKMCDEwNTYuODQ0lEsCjAgxMDUyLjk4N5RLAowHMTA0OS4xM5RLAowIMTA0NS4y
+NzOUSwKMCDEwNDEuNDE2lEsCjAgxMDM3LjU1OZRLAowIMTAzMy43MDKUSwKMCDEwMjkuODQ1lEsC
+jAgxMDI1Ljk4OJRLAowIMTAyMi4xMzGUSwKMCDEwMTguMjczlEsCjAgxMDE0LjQxNpRLAowIMTAx
+MC41NTmUSwKMCDEwMDYuNzAylEsCjAgxMDAyLjg0NZRLAowHOTk4Ljk4OJRLAowIOTk1LjEzMDmU
+SwKMCDk5MS4yNzM4lEsCjAg5ODcuNDE2N5RLAowIOTgzLjU1OTaUSwKMCDk3OS43MDI1lEsCjAg5
+NzUuODQ1NJRLAowIOTcxLjk4ODOUSwKMCDk2OC4xMzEylEsCjAg5NjQuMjc0MZRLAowIOTYwLjQx
+NzGUSwKMCDk1Ni41NTk5lEsCjAg5NTIuNzAyOJRLAowIOTQ4Ljg0NTiUSwKMCDk0NC45ODg2lEsC
+jAg5NDEuMTMxNZRLAowIOTM3LjI3NDWUSwKMCDkzMy40MTc0lEsCjAg5MjkuNTYwMpRLAowIOTI1
+LjcwMzKUSwKMCDkyMS44NDYxlEsCjAc5MTcuOTg5lEsCjAg5MTQuMTMxOZRLAowIOTEwLjI3NDiU
+SwKMCDkwNi40MTc3lEsCjAg5MDIuNTYwNpRLAowEdHlwZZRLAXVqEgEAAH2UdWJoHCmBlH2UKGgf
+R0HXuKYbPorAaCB9lChq8wMAAH2UavUDAABOSv7///+GlHNoF0sEdWglfZSMB0hlYWxpbmeUSwFz
+ahIBAAB9lCiMCkltYWdlIE5hbWWUSwOMBUltYWdllEsDjAZTdHJhaW6USwOMBU1vdXNllEsDjAZH
+ZW5kZXKUSwGMA0FnZZRLAowDRE9ClEsDjApJbWFnZSBEYXRllEsDdXViaBwpgZR9lChoH0dB17iN
+H4+Ob2ggfZQojAljdXJ2ZXBsb3SUfZSMDWZlYXR1cmVfY29sb3KUTkr+////hpRzaBdLBHVoJX2U
+KIwIMTgwMS4yNjSUSwKMCDE3OTcuNDA3lEsCjAcxNzkzLjU1lEsCjAgxNzg5LjY5M5RLAowIMTc4
+NS44MzaUSwKMCDE3ODEuOTc5lEsCjAgxNzc4LjEyMZRLAowIMTc3NC4yNjSUSwKMCDE3NzAuNDA3
+lEsCjAcxNzY2LjU1lEsCjAgxNzYyLjY5M5RLAowIMTc1OC44MzaUSwKMCDE3NTQuOTc5lEsCjAgx
+NzUxLjEyMpRLAowIMTc0Ny4yNjWUSwKMCDE3NDMuNDA4lEsCjAcxNzM5LjU1lEsCjAgxNzM1LjY5
+M5RLAowIMTczMS44MzaUSwKMCDE3MjcuOTc5lEsCjAgxNzI0LjEyMpRLAowIMTcyMC4yNjWUSwKM
+CDE3MTYuNDA4lEsCjAgxNzEyLjU1MZRLAowIMTcwOC42OTSUSwKMCDE3MDQuODM3lEsCjAgxNzAw
+Ljk3OZRLAowIMTY5Ny4xMjKUSwKMCDE2OTMuMjY1lEsCjAgxNjg5LjQwOJRLAowIMTY4NS41NTGU
+SwKMCDE2ODEuNjk0lEsCjAgxNjc3LjgzN5RLAowHMTY3My45OJRLAowIMTY3MC4xMjOUSwKMCDE2
+NjYuMjY2lEsCjAgxNjYyLjQwOZRLAowIMTY1OC41NTGUSwKMCDE2NTQuNjk0lEsCjAgxNjUwLjgz
+N5RLAowHMTY0Ni45OJRLAowIMTY0My4xMjOUSwKMCDE2MzkuMjY2lEsCjAgxNjM1LjQwOZRLAowI
+MTYzMS41NTKUSwKMCDE2MjcuNjk1lEsCjAgxNjIzLjgzOJRLAowHMTYxOS45OJRLAowIMTYxNi4x
+MjOUSwKMCDE2MTIuMjY2lEsCjAgxNjA4LjQwOZRLAowIMTYwNC41NTKUSwKMCDE2MDAuNjk1lEsC
+jAgxNTk2LjgzOJRLAowIMTU5Mi45ODGUSwKMCDE1ODkuMTI0lEsCjAgxNTg1LjI2N5RLAowHMTU4
+MS40MZRLAowIMTU3Ny41NTKUSwKMCDE1NzMuNjk1lEsCjAgxNTY5LjgzOJRLAowIMTU2NS45ODGU
+SwKMCDE1NjIuMTI0lEsCjAgxNTU4LjI2N5RLAowHMTU1NC40MZRLAowIMTU1MC41NTOUSwKMCDE1
+NDYuNjk2lEsCjAgxNTQyLjgzOZRLAowIMTUzOC45ODGUSwKMCDE1MzUuMTI0lEsCjAgxNTMxLjI2
+N5RLAowHMTUyNy40MZRLAowIMTUyMy41NTOUSwKMCDE1MTkuNjk2lEsCjAgxNTE1LjgzOZRLAowI
+MTUxMS45ODKUSwKMCDE1MDguMTI1lEsCjAgxNTA0LjI2OJRLAowIMTUwMC40MTGUSwKMCDE0OTYu
+NTUzlEsCjAgxNDkyLjY5NpRLAowIMTQ4OC44MzmUSwKMCDE0ODQuOTgylEsCjAgxNDgxLjEyNZRL
+AowIMTQ3Ny4yNjiUSwKMCDE0NzMuNDExlEsCjAgxNDY5LjU1NJRLAowIMTQ2NS42OTeUSwKMBzE0
+NjEuODSUSwKMCDE0NTcuOTgylEsCjAgxNDU0LjEyNZRLAowIMTQ1MC4yNjiUSwKMCDE0NDYuNDEx
+lEsCjAgxNDQyLjU1NJRLAowIMTQzOC42OTeUSwKMBzE0MzQuODSUSwKMCDE0MzAuOTgzlEsCjAgx
+NDI3LjEyNpRLAowIMTQyMy4yNjmUSwKMCDE0MTkuNDExlEsCjAgxNDE1LjU1NJRLAowIMTQxMS42
+OTeUSwKMBzE0MDcuODSUSwKMCDE0MDMuOTgzlEsCjAgxNDAwLjEyNpRLAowIMTM5Ni4yNjmUSwKM
+CDEzOTIuNDEylEsCjAgxMzg4LjU1NZRLAowIMTM4NC42OTiUSwKMCDEzODAuODQxlEsCjAgxMzc2
+Ljk4M5RLAowIMTM3My4xMjaUSwKMCDEzNjkuMjY5lEsCjAgxMzY1LjQxMpRLAowIMTM2MS41NTWU
+SwKMCDEzNTcuNjk4lEsCjAgxMzUzLjg0MZRLAowIMTM0OS45ODSUSwKMCDEzNDYuMTI3lEsCjAcx
+MzQyLjI3lEsCjAgxMzM4LjQxMpRLAowIMTMzNC41NTWUSwKMCDEzMzAuNjk4lEsCjAgxMzI2Ljg0
+MZRLAowIMTMyMi45ODSUSwKMCDEzMTkuMTI3lEsCjAcxMzE1LjI3lEsCjAgxMzExLjQxM5RLAowI
+MTMwNy41NTaUSwKMCDEzMDMuNjk5lEsCjAgxMjk5Ljg0MpRLAowIMTI5NS45ODSUSwKMCDEyOTIu
+MTI3lEsCjAcxMjg4LjI3lEsCjAgxMjg0LjQxM5RLAowIMTI4MC41NTaUSwKMCDEyNzYuNjk5lEsC
+jAgxMjcyLjg0MpRLAowIMTI2OC45ODWUSwKMCDEyNjUuMTI4lEsCjAgxMjYxLjI3MZRLAowIMTI1
+Ny40MTOUSwKMCDEyNTMuNTU2lEsCjAgxMjQ5LjY5OZRLAowIMTI0NS44NDKUSwKMCDEyNDEuOTg1
+lEsCjAgxMjM4LjEyOJRLAowIMTIzNC4yNzGUSwKMCDEyMzAuNDE0lEsCjAgxMjI2LjU1N5RLAowG
+MTIyMi43lEsCjAgxMjE4Ljg0M5RLAowIMTIxNC45ODWUSwKMCDEyMTEuMTI4lEsCjAgxMjA3LjI3
+MZRLAowIMTIwMy40MTSUSwKMCDExOTkuNTU3lEsCjAYxMTk1LjeUSwKMCDExOTEuODQzlEsCjAgx
+MTg3Ljk4NpRLAowIMTE4NC4xMjmUSwKMCDExODAuMjcxlEsCjAgxMTc2LjQxNJRLAowIMTE3Mi41
+NTeUSwKMBjExNjguN5RLAowIMTE2NC44NDOUSwKMCDExNjAuOTg2lEsCjAgxMTU3LjEyOZRLAowI
+MTE1My4yNzKUSwKMCDExNDkuNDE1lEsCjAgxMTQ1LjU1OJRLAowIMTE0MS43MDGUSwKMCDExMzcu
+ODQ0lEsCjAgxMTMzLjk4NpRLAowIMTEzMC4xMjmUSwKMCDExMjYuMjcylEsCjAgxMTIyLjQxNZRL
+AowIMTExOC41NTiUSwKMCDExMTQuNzAxlEsCjAgxMTEwLjg0NJRLAowIMTEwNi45ODeUSwKMBzEx
+MDMuMTOUSwKMCDEwOTkuMjcylEsCjAgxMDk1LjQxNZRLAowIMTA5MS41NTiUSwKMCDEwODcuNzAx
+lEsCjAgxMDgzLjg0NJRLAowIMTA3OS45ODeUSwKMBzEwNzYuMTOUSwKMCDEwNzIuMjczlEsCjAgx
+MDY4LjQxNpRLAowIMTA2NC41NTmUSwKMCDEwNjAuNzAylEsCjAgxMDU2Ljg0NJRLAowIMTA1Mi45
+ODeUSwKMBzEwNDkuMTOUSwKMCDEwNDUuMjczlEsCjAgxMDQxLjQxNpRLAowIMTAzNy41NTmUSwKM
+CDEwMzMuNzAylEsCjAgxMDI5Ljg0NZRLAowIMTAyNS45ODiUSwKMCDEwMjIuMTMxlEsCjAgxMDE4
+LjI3M5RLAowIMTAxNC40MTaUSwKMCDEwMTAuNTU5lEsCjAgxMDA2LjcwMpRLAowIMTAwMi44NDWU
+SwKMBzk5OC45ODiUSwKMCDk5NS4xMzA5lEsCjAg5OTEuMjczOJRLAowIOTg3LjQxNjeUSwKMCDk4
+My41NTk2lEsCjAg5NzkuNzAyNZRLAowIOTc1Ljg0NTSUSwKMCDk3MS45ODgzlEsCjAg5NjguMTMx
+MpRLAowIOTY0LjI3NDGUSwKMCDk2MC40MTcxlEsCjAg5NTYuNTU5OZRLAowIOTUyLjcwMjiUSwKM
+CDk0OC44NDU4lEsCjAg5NDQuOTg4NpRLAowIOTQxLjEzMTWUSwKMCDkzNy4yNzQ1lEsCjAg5MzMu
+NDE3NJRLAowIOTI5LjU2MDKUSwKMCDkyNS43MDMylEsCjAg5MjEuODQ2MZRLAowHOTE3Ljk4OZRL
+AowIOTE0LjEzMTmUSwKMCDkxMC4yNzQ4lEsCjAg5MDYuNDE3N5RLAowIOTAyLjU2MDaUSwKMBHR5
+cGWUSwF1ahIBAAB9lHViZXUu
+</properties>
+		<properties node_id="4" format="pickle">gASVkwEAAAAAAAB9lCiMEmFwcGVuZF9wcmVkaWN0aW9uc5SIjBRhcHBlbmRfcHJvYmFiaWxpdGll
+c5SJjAphdXRvY29tbWl0lIiMEmNvbnRyb2xBcmVhVmlzaWJsZZSIjBNzYXZlZFdpZGdldEdlb21l
+dHJ5lENCAdnQywADAAAAAAqPAAAByQAADRAAAAPIAAAKkAAAAegAAA0PAAADxwAAAAEAAAAACgAA
+AAqQAAAB6AAADQ8AAAPHlIwQc2VsZWN0ZWRfbGVhcm5lcpRdlEsAYYwRc2VsZWN0ZWRfcXVhbnRp
+dHmUSwCMC19fdmVyc2lvbl9flEsBjBBjb250ZXh0X3NldHRpbmdzlF2UjBVvcmFuZ2V3aWRnZXQu
+c2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAR0aW1llEdB17rG35TRqIwGdmFsdWVzlH2UKIwJ
+c2VsZWN0aW9ulI+UaApLAXWMB2NsYXNzZXOUKIwDRE5BlIwIY29sbGFnZW6UjAhnbHljb2dlbpSM
+BmxpcGlkc5R0lHViYXUu
+</properties>
+		<properties node_id="5" format="pickle">gASVHxIAAAAAAAB9lCiMFGNvbXBhcmlzb25fY3JpdGVyaW9ulEsAjBJjb250cm9sQXJlYVZpc2li
+bGWUiIwNY3Zfc3RyYXRpZmllZJSIjAduX2ZvbGRzlEsDjAluX3JlcGVhdHOUSwOMCnJlc2FtcGxp
+bmeUSwCMBHJvcGWURz+5mZmZmZmajAtzYW1wbGVfc2l6ZZRLCYwTc2F2ZWRXaWRnZXRHZW9tZXRy
+eZRDQgHZ0MsAAwAAAAAK7wAAAaYAAA1wAAADpQAACvAAAAHFAAANbwAAA6QAAAABAAAAAAoAAAAK
+8AAAAcUAAA1vAAADpJSMEnNodWZmbGVfc3RyYXRpZmllZJSIjAh1c2Vfcm9wZZSJjAtzY29yZV90
+YWJsZZR9lIwQc2hvd19zY29yZV9oaW50c5R9lCiMBk1vZGVsX5SIjAZUcmFpbl+UiYwFVGVzdF+U
+iYwDTVNFlIiMAkYxlIiMCVByZWNpc2lvbpSIjARSTVNFlIiMA01BRZSIjAJSMpSIjAZSZWNhbGyU
+iIwDQVVDlIiMAkNBlIiMF1ByZWNpc2lvblJlY2FsbEZTdXBwb3J0lIiMC1RhcmdldFNjb3JllIiM
+B0xvZ0xvc3OUiYwLU3BlY2lmaWNpdHmUiYwXTWF0dGhld3NDb3JyQ29lZmZpY2llbnSUiIwGQ1ZS
+TVNFlImMD0NsdXN0ZXJpbmdTY29yZZSIjApTaWxob3VldHRllIiMF0FkanVzdGVkTXV0dWFsSW5m
+b1Njb3JllIh1c4wLX192ZXJzaW9uX1+USwSMEGNvbnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3
+aWRnZXQuc2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAR0aW1llEdB17jd0DS954wGdmFsdWVz
+lH2UKIwPY2xhc3Nfc2VsZWN0aW9ulIwDRE5BlEr/////hpSMDGZvbGRfZmVhdHVyZZSMCFNlbGVj
+dGVklEtlhpSMFWZvbGRfZmVhdHVyZV9zZWxlY3RlZJSJSv7///+GlGgNfZRoJksEdYwKYXR0cmli
+dXRlc5QojAgxODAxLjI2NJRLAoaUjAgxNzk3LjQwN5RLAoaUjAcxNzkzLjU1lEsChpSMCDE3ODku
+NjkzlEsChpSMCDE3ODUuODM2lEsChpSMCDE3ODEuOTc5lEsChpSMCDE3NzguMTIxlEsChpSMCDE3
+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
+</properties>
+		<properties node_id="6" format="literal">{'compatibility_mode': False, 'controlAreaVisible': True, 'number_of_folds': 10, 'replacement': False, 'sampleSizeNumber': 1, 'sampleSizePercentage': 70, 'sampleSizeSqlPercentage': 0.1, 'sampleSizeSqlTime': 1, 'sampling_type': 0, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x01\x80\x00\x00\x00.\x00\x00\x02?\x00\x00\x01\xbf\x00\x00\x01\x85\x00\x00\x00D\x00\x00\x02:\x00\x00\x01\xba\x00\x00\x00\x00\x00\x00\x00\x00\x03\xc0', 'selectedFold': 1, 'sql_dl': False, 'stratify': True, 'use_seed': True, '__version__': 2}</properties>
+		<properties node_id="7" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\xff\xff\xff\xf0\x00\x00\x007\x00\x00\x02y\x00\x00\x01\xb9\xff\xff\xff\xf5\x00\x00\x00M\x00\x00\x02t\x00\x00\x01\xb4\x00\x00\x00\x00\x00\x00\x00\x00\x03\xc0', 'select_rows': True, 'selected_cols': [], 'selected_rows': [], 'show_attribute_labels': True, 'show_distributions': False, '__version__': 2}</properties>
+		<properties node_id="8" format="literal">{'auto_commit': True, 'color_by_class': True, 'controlAreaVisible': True, 'savedWidgetGeometry': b'\x01\xd9\xd0\xcb\x00\x02\x00\x00\x00\x00\x00S\x00\x00\x00W\x00\x00\x02\xdc\x00\x00\x01\xd9\x00\x00\x00X\x00\x00\x00m\x00\x00\x02\xd7\x00\x00\x01\xd4\x00\x00\x00\x00\x00\x00\x00\x00\x03\xc0', 'select_rows': True, 'selected_cols': [], 'selected_rows': [], 'show_attribute_labels': True, 'show_distributions': False, '__version__': 2}</properties>
+		<properties node_id="9" format="literal">{'append_source_column': True, 'auto_commit': True, 'controlAreaVisible': True, 'ignore_compute_value': False, 'merge_type': 0, 'savedWidgetGeometry': b"\x01\xd9\xd0\xcb\x00\x03\x00\x00\x00\x00\x0b\xfe\x00\x00\x02*\x00\x00\r'\x00\x00\x03\xa7\x00\x00\x0b\xff\x00\x00\x02I\x00\x00\r&amp;\x00\x00\x03\xa6\x00\x00\x00\x01\x00\x00\x00\x00\n\x00\x00\x00\x0b\xff\x00\x00\x02I\x00\x00\r&amp;\x00\x00\x03\xa6", 'source_attr_name': 'TrainTest', 'source_column_role': 0, '__version__': 1}</properties>
+		<properties node_id="10" format="pickle">gASVLgYAAAAAAAB9lCiMC2F1dG9fY29tbWl0lIiMC2F1dG9fc2FtcGxllIiMEmNvbnRyb2xBcmVh
+VmlzaWJsZZSIjBNzYXZlZFdpZGdldEdlb21ldHJ5lENCAdnQywADAAAAAAG0AAAA6AAABDMAAALj
+AAABtAAAAQQAAAQzAAAC4wAAAAAAAAAABegAAAG0AAABBAAABDMAAALjlIwJc2VsZWN0aW9ulE6M
+EXRvb2x0aXBfc2hvd3NfYWxslIiMD3Zpc3VhbF9zZXR0aW5nc5R9lIwFZ3JhcGiUfZQojAthbHBo
+YV92YWx1ZZRLMIwNY2xhc3NfZGVuc2l0eZSJjBFqaXR0ZXJfY29udGludW91c5SIjAtqaXR0ZXJf
+c2l6ZZRLAIwTbGFiZWxfb25seV9zZWxlY3RlZJSJjBZvcnRob25vcm1hbF9yZWdyZXNzaW9ulImM
+C3BvaW50X3dpZHRolEsBjAlzaG93X2dyaWSUiIwLc2hvd19sZWdlbmSUiYwNc2hvd19yZWdfbGlu
+ZZSJdYwLX192ZXJzaW9uX1+USwWMEGNvbnRleHRfc2V0dGluZ3OUXZQojBVvcmFuZ2V3aWRnZXQu
+c2V0dGluZ3OUjAdDb250ZXh0lJOUKYGUfZQojAR0aW1llEdB17rIv5avsowGdmFsdWVzlH2UKIwK
+YXR0cl9jb2xvcpROSv7///+GlIwKYXR0cl9sYWJlbJROSv7///+GlIwKYXR0cl9zaGFwZZROSv7/
+//+GlIwJYXR0cl9zaXpllE5K/v///4aUjAZhdHRyX3iUjAlGZWF0dXJlIDKUS2aGlIwGYXR0cl95
+lIwJRmVhdHVyZSAxlEtmhpRoCn2UaBZLBXWMCmF0dHJpYnV0ZXOUfZQojAlGZWF0dXJlIDGUSwKM
+CUZlYXR1cmUgMpRLAnWMBW1ldGFzlH2UdWJoGymBlH2UKGgeR0HXusi/lp9baB99lCiMCmF0dHJf
+Y29sb3KUTkr+////hpSMCmF0dHJfbGFiZWyUTkr+////hpSMCmF0dHJfc2hhcGWUTkr+////hpSM
+CWF0dHJfc2l6ZZROSv7///+GlIwGYXR0cl94lIwJRmVhdHVyZSAylEtmhpSMBmF0dHJfeZSMCUZl
+YXR1cmUgMZRLZoaUjAVncmFwaJR9lGgWSwV1aDB9lChoRUsCaEJLAnVoNH2UdWJoGymBlH2UKGge
+R0HXup63to+4aB99lChoOU5K/v///4aUaDtOSv7///+GlGg9Tkr+////hpRoP05K/v///4aUaEGM
+CUZlYXR1cmUgMpRLZoaUaESMCUZlYXR1cmUgMZRLZoaUaEd9lGgWSwV1aDB9lChoVEsCaFJLAnVo
+NH2UdWJoGymBlH2UKGgeR0HXuN3iOlvZaB99lCiMCmF0dHJfY29sb3KUTkr+////hpSMCmF0dHJf
+bGFiZWyUTkr+////hpSMCmF0dHJfc2hhcGWUTkr+////hpSMCWF0dHJfc2l6ZZROSv7///+GlIwG
+YXR0cl94lIwJRmVhdHVyZSAylEtmhpSMBmF0dHJfeZSMCUZlYXR1cmUgMZRLZoaUjAVncmFwaJR9
+lGgWSwV1aDB9lChoaEsCaGVLAnVoNH2UdWJoGymBlH2UKGgeR0HXuIBe6Yh1aB99lChoXE5K/v//
+/4aUaF5OSv7///+GlGhgTkr+////hpRoYk5K/v///4aUaGRoZUtmhpRoZ2hoS2aGlGhqfZRoFksF
+dWgwfZQoaGhLAmhlSwJ1aDR9lHViaBspgZR9lChoHkdB17iAVfiBVWgffZQoaFxOSv7///+GlGhe
+Tkr+////hpRoYE5K/v///4aUaGJOSv7///+GlGhkjAlGZWF0dXJlIDKUS2aGlGhnjAlGZWF0dXJl
+IDGUS2aGlGhqfZRoFksFdWgwfZQoaINLAmiBSwJ1aDR9lHViaBspgZR9lChoHkdB17iAKhBz42gf
+fZQoaFxOSv7///+GlGheTkr+////hpRoYE5K/v///4aUaGJOSv7///+GlGhkjAlGZWF0dXJlIDKU
+S2aGlGhnjAlGZWF0dXJlIDGUS2aGlGhqfZRoFksFdWgwfZQoaJFLAmiPSwJ1aDR9lHViZXUu
+</properties>
+	</node_properties>
+	<session_state>
+		<window_groups />
+	</session_state>
+</scheme>

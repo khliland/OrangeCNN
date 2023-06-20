@@ -1,6 +1,3 @@
-from Orange.data import Table
-import numpy as np
-
 ####################
 ## Input handling ##
 ####################
@@ -34,6 +31,9 @@ def dataPrep(in_data):
 from tensorflow.keras import models, optimizers, layers
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
+from Orange.data import Table
+import numpy as np
+
 
 
 
