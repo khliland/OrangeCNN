@@ -33,10 +33,11 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.optimizers import Adam
 from Orange.data import Table
 import numpy as np
+import keras
 
 
 
-
+@keras.utils.register_keras_serializable(package='Custom')
 class SimpleRegressor:
     def __init__(self):
         pass
@@ -66,6 +67,7 @@ class SimpleRegressor:
         model.compile(loss='mae', optimizer=opt, metrics=['root_mean_squared_error'])
         return model
 
+@keras.utils.register_keras_serializable(package='Custom')
 class SimpleClassifier:
     def __init__(self):
         pass
