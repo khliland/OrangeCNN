@@ -91,7 +91,7 @@ class SimpleClassifier:
         if num_classes == 2:
             out = layers.Dense(1, activation='sigmoid')(x)
             model = models.Model(input_layer, out)
-            model.compile(loss='binary_crossentropy', optimizer=optimizers.Adam(lr=1e-03), metrics=['accuracy'])
+            model.compile(loss='binary_crossentropy', optimizer=optimizers.Adam(learning_rate=1e-03), metrics=['accuracy'])
         else:
             out = layers.Dense(num_classes, activation='softmax')(x)
             model = models.Model(input_layer, out)
@@ -103,7 +103,7 @@ class SimpleClassifier:
 ## Applied to input data ##
 ###########################
 
-def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, batch_size=64, epochs=10, verbose=1, shuffle=True, lr=0.01):
+def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, batch_size=64, epochs=10, verbose=1, shuffle=True, learning_rate=0.01):
     if type(X_train) == type(None):
         return None
     else:
@@ -111,7 +111,7 @@ def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, ba
         # Classification
         if classify:
             sc = SimpleClassifier()
-            model = sc.build(n_wave, activation="relu", num_classes=len(np.unique(Y_train)), optimizer=Adam(lr=lr))
+            model = sc.build(n_wave, activation="relu", num_classes=len(np.unique(Y_train)), optimizer=Adam(learning_rate=learning_rate))
             Y_train_b = to_categorical(Y_train)
             # With test data
             if not (type(Y_test) == type(None)):
@@ -124,7 +124,7 @@ def CNN(classify, X_train=X_train, Y_train=Y_train, X_test=None, Y_test=None, ba
         # Regression
         else:
             sr = SimpleRegressor()
-            model = sr.build(n_wave, activation="relu", optimizer=Adam(lr=lr))
+            model = sr.build(n_wave, activation="relu", optimizer=Adam(learning_rate=learning_rate))
             if not (type(Y_test) == type(None)):
                 history = model.fit(X_train, Y_train, batch_size=batch_size, epochs=epochs, verbose=verbose, shuffle=shuffle, validation_data = (X_test, Y_test))
             else:
